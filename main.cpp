@@ -10,22 +10,39 @@ int main() {
 
     c.r = 0;
     c.g = 255;
-    c.b = 255;
+    //c.b = 255;
 
     screen.clear_screen();
 
-    // draw coordinates
-    screen.draw_line(c, 250, 0, 250, YRES - 1);
-    screen.draw_line(c, 0, 250, XRES - 1, 250);
+    //octant 1
+    screen.draw_line(c, 0, 0, XRES-1, YRES - 75);
+    //octant 2
+    screen.draw_line(c, 0, 0, XRES - 75, YRES-1); 
+    //octant 8
+    screen.draw_line(c, 0, YRES-1, XRES-1, 75);  
+    //octant 7
+    screen.draw_line(c, 0, YRES-1, XRES - 75, 0); // <--!!!
 
-    // start drawing lines
-    c.r = 255;
+    c.g = 0;
+    c.b = MAX_COLOR;
+    //octant 5
+    screen.draw_line(c, XRES - 1, YRES - 1, 0, 75);
+    //octant 6
+    screen.draw_line(c, XRES - 1, YRES -1, 75, 0); // <--!!!
+    //octant 4
+    screen.draw_line(c, XRES - 1, 0, 0, YRES - 75);
+    //octant 3
+    screen.draw_line(c, XRES - 1, 0, 75, YRES - 1);
 
-    // octant 8
-    screen.draw_line(c, 0, 230, XRES - 1, 270);
-    screen.draw_line(c, XRES - 1, 270, 0, 230);
-    //screen.draw_line(c, 230, 0, 280, YRES - 1);
-    //screen.draw_line(c, 280, YRES - 1, 230, 0);
-    //screen.plot(c,0,0);
+    c.b = 0;
+    c.r = MAX_COLOR;
+    //y = x, y = -x
+    screen.draw_line(c, 0, 0, XRES - 1, YRES - 1);
+    screen.draw_line(c, 0, YRES - 1, XRES - 1, 0);
+
+    //horizontal, vertical line
+    screen.draw_line(c, 0, YRES / 2, XRES - 1, YRES / 2);
+    screen.draw_line(c, XRES / 2, 0, XRES / 2, YRES - 1);
+
     screen.save_ppm("line.ppm");
 }

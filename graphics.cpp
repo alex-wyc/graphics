@@ -58,6 +58,9 @@ void Canvas::draw_line(color c, int x0, int y0, int x1, int y1) {
         tmp = x0;
         x0 = x1;
         x1 = tmp;
+        tmp = y0;
+        y0 = y1;
+        y1 = tmp;
     }
 
     // quadrant '1' -- actually looks like quadrant 8 due to origin location
@@ -116,13 +119,13 @@ void Canvas::draw_line(color c, int x0, int y0, int x1, int y1) {
             while (y > y1) { // octant '7'
                 plot(c, x, y);
 
-                if (d < 0) {
+                if (d > 0) {
                     x++;
-                    d += B;
+                    d += A;
                 }
 
                 y--;
-                d -= A;
+                d -= B;
             }
         }
     }
