@@ -130,3 +130,7 @@ void Canvas::draw_line(color c, int x0, int y0, int x1, int y1) {
         }
     }
 }
+
+void Canvas::draw_line(color c, point init, point finish) {
+    draw_line(c, init.first, init.second, finish.first, finish.second);
+}
