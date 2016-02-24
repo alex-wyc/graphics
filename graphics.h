@@ -13,6 +13,8 @@ struct point_t {
 
 typedef struct point_t color;
 
+typedef std::pair<int, int> point;
+
 class Canvas {
         int xres, yres, max_color;
         color *screen;
@@ -23,6 +25,7 @@ class Canvas {
         void clear_screen();
         void save_ppm(char *file);
         void draw_line(color c, int x0, int y0, int x1, int y1);
+        void draw_line(color c, point init, point finish);
 };
 
 #endif // GRAPHICS_H_
