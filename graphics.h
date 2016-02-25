@@ -8,6 +8,11 @@
 #define YRES 500
 #define MAX_COLOR 255
 
+#define X 0
+#define Y 1
+#define Z 2
+#define W 3
+
 // I <3 macro hacks
 #define GET_X(p) std::get<0>(p)
 #define GET_Y(p) std::get<1>(p)
@@ -22,7 +27,7 @@ typedef struct pixel {
     int b;
 } color;
 
-typedef std::pair<int, int> 2d_coor;
+typedef std::pair<int, int> coor_2d;
 typedef std::tuple<float, float, float, float> point;
 typedef std::pair<point, point> edge;
 typedef std::vector<edge> edge_set;
@@ -37,10 +42,17 @@ class Canvas {
         void clear_screen();
         void save_ppm(char *file);
         void draw_line(color c, int x0, int y0, int x1, int y1);
-        void draw_line(color c, 2d_coor init, 2d_coor finish);
+        void draw_line(color c, coor_2d init, coor_2d finish);
         void draw_line(color c, point i, point f);
         void draw_edge(color c, edge e);
         void draw_edge_set(color c, edge_set es);
 };
+
+point transform(point v, float A[4][4]);
+point dilate(point v, float sx, float sy, float sz);
+edge dilate(edge e, float sx, float sy, float sz);
+point translate(point v, float dx, float dy, float dz);
+edge translate(edge e, float dx, float dy, float dz);
+point rotate(point v, int axis, float angle);
 
 #endif // GRAPHICS_H_

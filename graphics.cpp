@@ -131,7 +131,7 @@ void Canvas::draw_line(color c, int x0, int y0, int x1, int y1) {
     }
 }
 
-void Canvas::draw_line(color c, 2d_coor init, 2d_coor finish) {
+void Canvas::draw_line(color c, coor_2d init, coor_2d finish) {
     draw_line(c, init.first, init.second, finish.first, finish.second);
 }
 
