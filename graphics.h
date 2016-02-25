@@ -1,6 +1,7 @@
 #ifndef GRAPHICS_H_
 #define GRAPHICS_H_
 
+#include <cmath>
 #include <tuple>
 #include <vector>
 
@@ -50,7 +51,7 @@ class Canvas {
         void draw_edge(color c, edge e);
         void draw_edge_set(color c, edge_set es);
 
-        void save_ppm(const char *file);
+        void save_ppm(char *file);
 };
 
 point transform(point v, float A[4][4]);
@@ -65,6 +66,10 @@ edge_set translate_figure(edge_set es, float dx, float dy, float dz);
 
 point rotate(point v, int axis, float angle);
 edge rotate(edge e, int axis, float angle);
-edge_set rotate_figure(edge e, int axis, float angle);
+edge_set rotate_figure(edge_set es, int axis, float angle);
+
+point rotate(point v, float ax, float ay, float az);
+edge rotate(edge e, float ax, float ay, float az);
+edge_set rotate_figure(edge_set es, float ax, float ay, float az);
 
 #endif // GRAPHICS_H_

@@ -13,6 +13,8 @@
 
 #include "graphics.h"
 
+#define PI 3.1415926535
+
 float dot_product(float v1[4], float v2[4]) {
     float product = 0;
     for (int i = 0 ; i < 4 ; i++) {
@@ -29,77 +31,119 @@ point transform(point v, float A[4][4]) {
                            dot_product(v_f, A[3]));
 }
 
+void generate_dilation_matrix(float A[4][4], float sx, float sy, float sz) {
+    A[0][0] = sx; A[0][1] = 0; A[0][2] = 0; A[0][3] = 0;
+    A[1][0] = 0; A[1][1] = sy; A[1][2] = 0; A[1][3] = 0;
+    A[2][0] = 0; A[2][1] = 0; A[2][2] = sz; A[2][3] = 0;
+    A[3][0] = 0; A[3][1] = 0; A[3][2] = 0; A[3][3] = 1;
+}
+
 point dilate(point v, float sx, float sy, float sz) {
-    float A[4][4] = {
-        {sx, 0, 0, 0},
-        {0, sy, 0, 0},
-        {0, 0, sz, 0},
-        {0, 0 ,0, 1}
-    };
+    float A[4][4];
+    generate_dilation_matrix(A, sx, sy, sz);
     return transform(v, A);
 }
 
 edge dilate(edge e, float sx, float sy, float sz) {
-    float A[4][4] = {
-        {sx, 0, 0, 0},
-        {0, sy, 0, 0},
-        {0, 0, sz, 0},
-        {0, 0 ,0, 1}
-    };
-
-    return make_pair(transform(e.first, A), transform(e.second, A));
+    float A[4][4];
+    generate_dilation_matrix(A, sx, sy, sz);
+    return EDGE(transform(e.first, A), transform(e.second, A));
 }
 
 edge_set dilate_figure(edge_set es, float sx, float sy, float sz) {
+    float A[4][4];
+    generate_dilation_matrix(A, sx, sy, sz);
+    
     size_t s = es.size();
     edge_set to_return(s);
 
-    float A[4][4] = {
-        {sx, 0, 0, 0},
-        {0, sy, 0, 0},
-        {0, 0, sz, 0},
-        {0, 0 ,0, 1}
-    };
-
     for (int i = 0 ; i < s ; i++) {
-        to_return[i] = make_pair(transform(es.at(i).first, A), transform(es.at(i).second, A));
+        to_return[i] = EDGE(transform(es.at(i).first, A), transform(es.at(i).second, A));
     }
     return to_return;
 }
 
+void generate_translation_matrix(float A[4][4], float dx, float dy, float dz) {
+    A[0][0] = 1; A[0][1] = 0; A[0][2] = 0; A[0][3] = dx;
+    A[1][0] = 0; A[1][1] = 1; A[1][2] = 0; A[1][3] = dy;
+    A[2][0] = 0; A[2][1] = 0; A[2][2] = 1; A[2][3] = dz;
+    A[3][0] = 0; A[3][1] = 0; A[3][2] = 0; A[3][3] = 1;
+}
+
 point translate(point v, float dx, float dy, float dz) {
-    float A[4][4] = {
-        {1, 0, 0, dx},
-        {0, 1, 0, dy},
-        {0, 0, 1, dz},
-        {0, 0, 0, 1}
-    };
+    float A[4][4];
+    generate_translation_matrix(A, dx, dy, dz);
     return transform(v, A);
 }
 
 edge translate(edge e, float dx, float dy, float dz) {
-    float A[4][4] = {
-        {1, 0, 0, dx},
-        {0, 1, 0, dy},
-        {0, 0, 1, dz},
-        {0, 0, 0, 1}
-    };
-    return make_pair(transform(e.first, A), transform(e.second, A));
+    float A[4][4];
+    generate_translation_matrix(A, dx, dy, dz);
+    return EDGE(transform(e.first, A), transform(e.second, A));
 }
 
 edge_set translate_figure(edge_set es, float dx, float dy, float dz) {
+    float A[4][4];
+    generate_translation_matrix(A, dx, dy, dz);
+
     size_t s = es.size();
     edge_set to_return(s);
 
-    float A[4][4] = {
-        {1, 0, 0, dx},
-        {0, 1, 0, dy},
-        {0, 0, 1, dz},
-        {0, 0, 0, 1}
-    };
-
     for (int i = 0 ; i < s ; i++) {
-        to_return[i] = make_pair(transform(es.at(i).first, A), transform(es.at(i).second, A));
+        to_return[i] = EDGE(transform(es.at(i).first, A), transform(es.at(i).second, A));
     }
+    return to_return;
+}
+
+void generate_rotation_matrix(float A[4][4], int axis, float angle) {
+    float a_radian = angle * PI / 180.0;
+
+    switch(axis) {
+        case X: // y->z is positive
+            A[0][0] = 1; A[0][1] = 0; A[0][2] = 0; A[0][3] = 0;
+            A[1][0] = 0; A[1][1] = cos(a_radian); A[1][2] = -1 * sin(a_radian); A[1][3] = 0;
+            A[2][0] = 0; A[2][1] = sin(a_radian); A[2][2] = cos(a_radian); A[2][3] = 0;
+            A[3][0] = 0; A[3][1] = 0; A[3][2] = 0; A[3][3] = 1;
+            break;
+
+        case Y: // x->z is positive
+            A[0][0] = cos(a_radian); A[0][1] = 0; A[0][2] = -1 * sin(a_radian); A[0][3] = 0;
+            A[1][0] = 0; A[1][1] = 1; A[1][2] = 0; A[1][3] = 0;
+            A[2][0] = sin(a_radian); A[2][1] = 0; A[2][2] = cos(a_radian); A[2][3] = 0;
+            A[3][0] = 0; A[3][1] = 0; A[3][2] = 0; A[3][3] = 1;
+            break;
+
+        case Z: // x->y is positive
+            A[0][0] = cos(a_radian); A[0][1] = -1 * sin(a_radian); A[0][2] = 0; A[0][3] = 0;
+            A[1][0] = sin(a_radian); A[1][1] = cos(a_radian); A[1][2] = 0; A[1][3] = 0;
+            A[2][0] = 0; A[2][1] = 0; A[2][2] = 1; A[2][3] = 0;
+            A[3][0] = 0; A[3][1] = 0; A[3][2] = 0; A[3][3] = 1;
+            break;
+    }
+}
+
+point rotate(point v, int axis, float angle) {
+    float A[4][4];
+    generate_rotation_matrix(A, axis, angle);
+    return transform(v, A);
+}
+
+edge rotate(edge e, int axis, float angle) {
+    float A[4][4];
+    generate_rotation_matrix(A, axis, angle);
+    return EDGE(transform(e.first, A), transform(e.second, A));
+}
+
+edge_set rotate_figure(edge_set es, int axis, int angle) {
+    float A[4][4];
+    generate_rotation_matrix(A, axis, angle);
+
+    size_t s = es.size();
+    edge_set to_return(s);
+    
+    for (int i = 0 ; i < s ; i++) {
+        to_return[i] = EDGE(transform(es.at(i).first, A), transform(es.at(i).second, A));
+    }
+
     return to_return;
 }

@@ -35,7 +35,7 @@ void Canvas::clear_screen() {
     }
 }
 
-void Canvas::save_ppm(const char *file) {
+void Canvas::save_ppm(char *file) {
     std::ofstream fout(file);
     fout << "P3\n" << xres << " " << yres << " " << max_color << '\n';
 

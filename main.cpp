@@ -73,6 +73,9 @@ int main() {
     es = translate_figure(es, -200, 30, 0);
     c.r = 0;
     screen.draw_edge_set(c, es);
+    es = rotate_figure(c, Z, es, 30);
+    screen.draw_edge_set(c, es);
+    c.g = 0;
 
     screen.save_ppm("line.ppm");
 }
