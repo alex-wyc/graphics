@@ -19,7 +19,8 @@
 #define GET_Z(p) std::get<2>(p)
 #define GET_W(p) std::get<3>(p)
 
-#define MAKE_PT(x, y, z) std::make_tuple(x, y, z, 1)
+#define PT(x, y, z) std::make_tuple(x, y, z, 1)
+#define EDGE(pt1, pt2) std::make_pair(pt1, pt2)
 
 typedef struct pixel {
     int r;
@@ -51,8 +52,10 @@ class Canvas {
 point transform(point v, float A[4][4]);
 point dilate(point v, float sx, float sy, float sz);
 edge dilate(edge e, float sx, float sy, float sz);
+edge_set dilate_figure(edge_set es, float sx, float sy, float sz);
 point translate(point v, float dx, float dy, float dz);
 edge translate(edge e, float dx, float dy, float dz);
+edge_set translate_figure(edge_set es, float dx, float dy, float dz);
 point rotate(point v, int axis, float angle);
 
 #endif // GRAPHICS_H_
