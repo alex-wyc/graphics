@@ -54,20 +54,29 @@ class Canvas {
         void save_ppm(char *file);
 };
 
-point transform(point v, float A[4][4]);
+float dot_product(float v1[4], float v2[4]);
+void matrix_multiply_4(float result[4][4], float first[4][4], float second[4][4]);
 
+point transform(point v, float A[4][4]);
+edge transform(edge e, float A[4][4]);
+edge_set transform_figure(edge e, float A[4][4]);
+
+void generate_dilation_matrix(float A[4][4], float sx, float sy, float sz);
 point dilate(point v, float sx, float sy, float sz);
 edge dilate(edge e, float sx, float sy, float sz);
 edge_set dilate_figure(edge_set es, float sx, float sy, float sz);
 
+void generate_translation_matrix(float A[4][4], float dx, float dy, float dz);
 point translate(point v, float dx, float dy, float dz);
 edge translate(edge e, float dx, float dy, float dz);
 edge_set translate_figure(edge_set es, float dx, float dy, float dz);
 
+void generate_rotation_matrix(float A[4][4], int axis, float angle);
 point rotate(point v, int axis, float angle);
 edge rotate(edge e, int axis, float angle);
 edge_set rotate_figure(edge_set es, int axis, float angle);
 
+void generate_rotation_matrix(float A[4][4], float ax, float ay, float az);
 point rotate(point v, float ax, float ay, float az);
 edge rotate(edge e, float ax, float ay, float az);
 edge_set rotate_figure(edge_set es, float ax, float ay, float az);
