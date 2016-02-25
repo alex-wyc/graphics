@@ -35,7 +35,7 @@ void Canvas::clear_screen() {
     }
 }
 
-void Canvas::save_ppm(char *file) {
+void Canvas::save_ppm(const char *file) {
     std::ofstream fout(file);
     fout << "P3\n" << xres << " " << yres << " " << max_color << '\n';
 
@@ -52,18 +52,14 @@ void Canvas::save_ppm(char *file) {
 }
 
 void Canvas::draw_line(color c, int x0, int y0, int x1, int y1) {
-    int x, y, d, A, B, tmp;
 
-    if (x1 < x0) { // always flip x0 and x1 such that x1 > x0
-        tmp = x0;
-        x0 = x1;
-        x1 = tmp;
-        tmp = y0;
-        y0 = y1;
-        y1 = tmp;
+    if (x1 < x0) { // flip!
+        draw_line(c, x1, y1, x0, y0);
+        return;
     }
 
-    // quadrant '1' -- actually looks like quadrant 8 due to origin location
+    int x, y, d, A, B;
+
     x = x0;
     y = y0;
     A = y1 - y0; // should be positive

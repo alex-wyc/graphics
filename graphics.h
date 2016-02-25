@@ -39,23 +39,32 @@ class Canvas {
     public:
         Canvas();
         Canvas(int init_xres, int init_yres, int max_color);
-        void plot(color c, int x, int y);
+
         void clear_screen();
-        void save_ppm(char *file);
+
+        void plot(color c, int x, int y);
+
         void draw_line(color c, int x0, int y0, int x1, int y1);
         void draw_line(color c, coor_2d init, coor_2d finish);
         void draw_line(color c, point i, point f);
         void draw_edge(color c, edge e);
         void draw_edge_set(color c, edge_set es);
+
+        void save_ppm(const char *file);
 };
 
 point transform(point v, float A[4][4]);
+
 point dilate(point v, float sx, float sy, float sz);
 edge dilate(edge e, float sx, float sy, float sz);
 edge_set dilate_figure(edge_set es, float sx, float sy, float sz);
+
 point translate(point v, float dx, float dy, float dz);
 edge translate(edge e, float dx, float dy, float dz);
 edge_set translate_figure(edge_set es, float dx, float dy, float dz);
+
 point rotate(point v, int axis, float angle);
+edge rotate(edge e, int axis, float angle);
+edge_set rotate_figure(edge e, int axis, float angle);
 
 #endif // GRAPHICS_H_
