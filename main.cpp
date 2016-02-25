@@ -50,12 +50,29 @@ int main() {
     c.b = 0;
     int d = 10;
 
+    edge_set es;
+
+    //for (int i = 0 ; i < 20 ; i++) {
+    //    screen.draw_line(c, XRES/2, YRES/2 + (20 - i) * d, XRES/2 + i * d, YRES/2);
+    //    screen.draw_line(c, XRES/2, YRES/2 - (20 - i) * d, XRES/2 - i * d, YRES/2);
+    //    screen.draw_line(c, XRES/2, YRES/2 - (20 - i) * d, XRES/2 + i * d, YRES/2);
+    //    screen.draw_line(c, XRES/2, YRES/2 + (20 - i) * d, XRES/2 - i * d, YRES/2);
+    //}
+
     for (int i = 0 ; i < 20 ; i++) {
-        screen.draw_line(c, XRES/2, YRES/2 + (20 - i) * d, XRES/2 + i * d, YRES/2);
-        screen.draw_line(c, XRES/2, YRES/2 - (20 - i) * d, XRES/2 - i * d, YRES/2);
-        screen.draw_line(c, XRES/2, YRES/2 - (20 - i) * d, XRES/2 + i * d, YRES/2);
-        screen.draw_line(c, XRES/2, YRES/2 + (20 - i) * d, XRES/2 - i * d, YRES/2);
+        es.push_back(EDGE(PT(XRES/2, YRES/2 + (20 - i) * d, 0), PT(XRES/2 + i * d, YRES/2, 0)));
+        es.push_back(EDGE(PT(XRES/2, YRES/2 - (20 - i) * d, 0), PT(XRES/2 - i * d, YRES/2, 0)));
+        es.push_back(EDGE(PT(XRES/2, YRES/2 - (20 - i) * d, 0), PT(XRES/2 + i * d, YRES/2, 0)));
+        es.push_back(EDGE(PT(XRES/2, YRES/2 + (20 - i) * d, 0), PT(XRES/2 - i * d, YRES/2, 0)));
     }
+
+    screen.draw_edge_set(c, es);
+    es = dilate_figure(es, 1.5, 1, 1);
+    c.b = MAX_COLOR;
+    screen.draw_edge_set(c, es);
+    es = translate_figure(es, -200, 30, 0);
+    c.r = 0;
+    screen.draw_edge_set(c, es);
 
     screen.save_ppm("line.ppm");
 }

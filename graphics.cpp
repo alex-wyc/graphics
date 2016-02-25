@@ -131,6 +131,21 @@ void Canvas::draw_line(color c, int x0, int y0, int x1, int y1) {
     }
 }
 
-void Canvas::draw_line(color c, point init, point finish) {
+void Canvas::draw_line(color c, coor_2d init, coor_2d finish) {
     draw_line(c, init.first, init.second, finish.first, finish.second);
+}
+
+void Canvas::draw_line(color c, point i, point f) {
+    draw_line(c, GET_X(i), GET_Y(i), GET_X(f), GET_Y(f));
+}
+
+void Canvas::draw_edge(color c, edge e) {
+    draw_line(c, e.first, e.second);
+}
+
+void Canvas::draw_edge_set(color c, edge_set es) {
+    size_t sz = es.size();
+    for (int i = 0 ; i < sz ; i++) {
+        draw_edge(c, es.at(i));
+    }
 }
