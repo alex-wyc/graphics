@@ -55,11 +55,12 @@ class Canvas {
 };
 
 float dot_product(float v1[4], float v2[4]);
+void transpose_4(float result[4][4]);
 void matrix_multiply_4(float result[4][4], float first[4][4], float second[4][4]);
 
 point transform(point v, float A[4][4]);
 edge transform(edge e, float A[4][4]);
-edge_set transform_figure(edge e, float A[4][4]);
+edge_set transform_figure(edge_set es, float A[4][4]);
 
 void generate_dilation_matrix(float A[4][4], float sx, float sy, float sz);
 point dilate(point v, float sx, float sy, float sz);
