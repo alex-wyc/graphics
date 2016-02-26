@@ -31,6 +31,19 @@ point transform(point v, float A[4][4]) {
                            dot_product(v_f, A[3]));
 }
 
+edge transform(edge e, float A[4][4]) {
+    return EDGE(transform(e.first, A), transform(e.second, A));
+}
+
+edge_set translate_figure(edge_set es, float A[4][4]) {
+    size_t s = es.size();
+    edge_set to_return(s);
+
+    for (int i = 0 ; i < s ; i++) {
+        to_return[i] = EDGE(transform(es.at(i).first, A), transform(es.at(i).second, A));
+    }
+}
+
 void generate_dilation_matrix(float A[4][4], float sx, float sy, float sz) {
     A[0][0] = sx; A[0][1] = 0; A[0][2] = 0; A[0][3] = 0;
     A[1][0] = 0; A[1][1] = sy; A[1][2] = 0; A[1][3] = 0;
@@ -134,7 +147,7 @@ edge rotate(edge e, int axis, float angle) {
     return EDGE(transform(e.first, A), transform(e.second, A));
 }
 
-edge_set rotate_figure(edge_set es, int axis, int angle) {
+edge_set rotate_figure(edge_set es, int axis, float angle) {
     float A[4][4];
     generate_rotation_matrix(A, axis, angle);
 

@@ -68,14 +68,17 @@ int main() {
 
     screen.draw_edge_set(c, es);
     es = dilate_figure(es, 1.5, 1, 1);
+
     c.b = MAX_COLOR;
     screen.draw_edge_set(c, es);
+
     es = translate_figure(es, -200, 30, 0);
     c.r = 0;
     screen.draw_edge_set(c, es);
-    es = rotate_figure(c, Z, es, 30);
-    screen.draw_edge_set(c, es);
+
+    es = rotate_figure(es, Z, 30);
     c.g = 0;
+    screen.draw_edge_set(c, es);
 
     screen.save_ppm("line.ppm");
 }
