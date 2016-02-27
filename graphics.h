@@ -4,6 +4,9 @@
 #include <cmath>
 #include <tuple>
 #include <vector>
+#include <algorithm>
+#include <fstream>
+#include <iostream>
 
 #define XRES 500
 #define YRES 500
@@ -54,8 +57,10 @@ class Canvas {
         void save_ppm(char *file);
 };
 
+void print_matrix_4(float A[4][4]);
+
 float dot_product(float v1[4], float v2[4]);
-void transpose_4(float result[4][4]);
+void transpose_4(float A[4][4]);
 void matrix_multiply_4(float result[4][4], float first[4][4], float second[4][4]);
 
 point transform(point v, float A[4][4]);
@@ -76,10 +81,5 @@ void generate_rotation_matrix(float A[4][4], int axis, float angle);
 point rotate(point v, int axis, float angle);
 edge rotate(edge e, int axis, float angle);
 edge_set rotate_figure(edge_set es, int axis, float angle);
-
-void generate_rotation_matrix(float A[4][4], float ax, float ay, float az);
-point rotate(point v, float ax, float ay, float az);
-edge rotate(edge e, float ax, float ay, float az);
-edge_set rotate_figure(edge_set es, float ax, float ay, float az);
 
 #endif // GRAPHICS_H_

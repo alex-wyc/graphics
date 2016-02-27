@@ -15,12 +15,38 @@
 
 #define PI 3.1415926535
 
+void print_matrix_4(float A[4][4]) {
+    for (int i = 0 ; i < 4 ; i++) {
+        for (int j = 0 ; j < 4 ; j++) {
+            std::cout << A[i][j] << " ";
+        }
+        std::cout << "\n";
+    }
+}
+
 float dot_product(float v1[4], float v2[4]) {
     float product = 0;
     for (int i = 0 ; i < 4 ; i++) {
         product += v1[i] * v2[i];
     }
     return product;
+}
+
+void transpose_4(float A[4][4]) {
+    for (int i = 0 ; i < 4 ; i++) {
+        for (int j = i + 1 ; j < 4 ; j++) {
+            std::swap(A[i][j], A[j][i]);
+        }
+    }
+}
+
+void matrix_multiply_4(float result[4][4], float first[4][4], float second[4][4]) {
+    transpose_4(second);
+    for (int i = 0 ; i < 4 ; i++) {
+        for (int j = 0 ; j < 4 ; j++) {
+            result[i][j] = dot_product(first[i], second[j]);
+        }
+    }
 }
 
 point transform(point v, float A[4][4]) {
