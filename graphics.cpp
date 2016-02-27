@@ -40,11 +40,11 @@ void Canvas::display() {
     
     f = popen("display", "w");
 
-    fprintf(f, "PS3\n%d %d\n%d\n", xres, yres, max_color);
+    fprintf(f, "P3\n%d %d\n%d\n", xres, yres, max_color);
 
     for (int y = 0 ; y < yres ; y++) {
         for (int x = 0 ; x < xres ; x++) {
-            fprintf(f, "%d %d %d", screen[x + y * xres].r,
+            fprintf(f, "%d %d %d ", screen[x + y * xres].r,
                                    screen[x + y * xres].g,
                                    screen[x + y * xres].b);
         }
