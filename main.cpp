@@ -1,7 +1,44 @@
+/*******************************************************************************
+ * A line-drawing shell written in C++                                         *
+ *                                                                             *
+ * Authors                                                                     *
+ *  Yicheng Wang                                                               *
+ *                                                                             *
+ * Description                                                                 *
+ *  In Depth Description                                                       *
+ *                                                                             *
+ ******************************************************************************/
+
+/* TODO
+ *  Add unknown command handling
+ */
+
+/* Dev Log
+ *  Project Created: 2016-02-27 14:26 - Yicheng W.
+ */
+
 #include "graphics.h"
 
-#define HELP "This is the help string\n"
-#define WELCOME "Welcome!\n"
+#define HELP "Commands:\n\
+help: displays this string\n\n\
+exit: exits the program\n\n\
+add edge <x0> <y0> <z0> <x1> <y1> <z1>: adds the edge between the two points (x0, y0, z0) (x1, y1, z1) to the edge set\n\
+add point <x0> <y0> <z0>: adds the point to the edge set\n\n\
+transform dilate <sx> <sy> <sz>: modifies the master transformation matrix, dilates the figure by sx in the x directions and so on\n\
+transform translate <dx> <dy> <dz>: modifies the master transformation matrix, moves the figure by dx in the x directions and so on\n\
+transform rotate <axis> <angle>: modifies the master transformation matrix, rotates the figure by angle about the axis specified\n\
+transform apply: applies the transformation matrix to the edge set and resets it to the identity matrix\n\n\
+print edges: prints the edge set in its current form\n\
+print transformations: prints the master transformation matrix\n\n\
+clear all: wipes the screen, edge set and master transformation matrix\n\
+clear screen: wipes the screen only\n\
+clear edges: wipes the edge set only\n\
+clear transformations: wipes the master transformation matrix\n\n\
+draw <r> <b> <g>: draws the edge set in the color specified\n\n\
+display: displays the canvas\n\
+save <filename>: saves the canvas in ppm format in the specified filename\n"
+
+#define WELCOME "Welcome to the drawing shell! For help type 'help'\n"
 #define PROMPT ">> "
 
 int main(int argc, char *argv[]) {
@@ -32,6 +69,26 @@ int main(int argc, char *argv[]) {
             std::cout << HELP;
         }
 
+        else if (!command.compare("print")) {
+            std::cin >> command;
+
+            if (!command.compare("transformations")) {
+                print_matrix_4(master);
+            }
+
+            else if (!command.compare("edges")) {
+                for (int i = 0 ; i < es.size() ; i++) {
+                    std::cout << "(" << GET_X(es.at(i).first) << ", ";
+                    std::cout << GET_Y(es.at(i).first) << ", ";
+                    std::cout << GET_Z(es.at(i).first) << ")--(";
+                    std::cout << GET_X(es.at(i).second) << ", ";
+                    std::cout << GET_Y(es.at(i).second) << ", ";
+                    std::cout << GET_Z(es.at(i).second) << "), ";
+                }
+                std::cout << "\n";
+            }
+        }
+
         else if (!command.compare("add")) {
             std::cin >> command; // secondary command
             
@@ -52,7 +109,8 @@ int main(int argc, char *argv[]) {
             if (!command.compare("apply")) {
                 std::cout<< "Applying Transformations...\n";
                 es = transform_figure(es, master);
-                std::cout << "Done. The edge-set has been altered.\n";
+                gen_identity_matrix_4(master);
+                std::cout << "Done. The edge-set has been altered and the master transformation matrix has been cleared.\n";
             }
 
             else if (!command.compare("dilate")) {
@@ -139,8 +197,11 @@ int main(int argc, char *argv[]) {
             std::cout << "Image saved at '" << command << "'\n";
         }
 
-        std::cout << PROMPT;
+        else {
+            std::cout << "Invalid command: '" << command << "'\n";
+        }
 
+        std::cout << PROMPT;
     }
 
     return 0;
