@@ -16,7 +16,8 @@ int main(int argc, char *argv[]) {
     gen_identity_matrix_4(master);
 
     std::string command;
-    float a, b, c, d, e, f;
+    float a, b, c, d, e, f; // generic variables for scanning
+    char axis;
 
     std::cout << WELCOME;
     std::cout << PROMPT;
@@ -47,7 +48,52 @@ int main(int argc, char *argv[]) {
 
         else if (!command.compare("transform")) {
             std::cin >> command; // secondary command
-            // TODO
+            // XXX WHEN COMBINING LEFT MULTIPLY BY NEW ONE!!!
+            if (!command.compare("apply")) {
+                std::cout<< "Applying Transformations...\n";
+                es = transform_figure(es, master);
+                std::cout << "Done. The edge-set has been altered.\n";
+            }
+
+            else if (!command.compare("dilate")) {
+                std::cin >> a >> b >> c; // sx, sy, sz
+                generate_dilation_matrix(current, a, b, c);
+                matrix_multiply_4(master, current, master);
+                std::cout << "Done. Note that the dilation will not be applied until 'transform apply' is called.\n";
+            }
+
+            else if (!command.compare("translate")) {
+                std::cin >> a >> b >> c; // dx, dy, dz
+                generate_translation_matrix(current, a, b, c);
+                matrix_multiply_4(master, current, master);
+                std::cout << "Done. Note that the translation will not be applied until 'transform apply' is called.\n";
+            }
+
+            else if (!command.compare("rotate")) {
+                std::cin >> axis >> a;
+
+                switch (axis) {
+                    case 'X':
+                        generate_rotation_matrix(current, X, a);
+                        break;
+                    
+                    case 'Y':
+                        generate_rotation_matrix(current, Y, a);
+                        break;
+
+                    case 'Z':
+                        generate_rotation_matrix(current, Z, a);
+                        break;
+
+                    default:
+                        std::cout << "Please enter a valid rotation axis, i.e. 'X' 'Y' and 'Z'\n";
+                        break;
+                }
+
+                matrix_multiply_4(master, current, master);
+
+                std::cout << "Done. Note that the rotation will not be applied until 'transformation apply' is called.\n";
+            }
         }
 
         else if (!command.compare("clear")) {
@@ -79,7 +125,12 @@ int main(int argc, char *argv[]) {
         else if (!command.compare("draw")) {
             std::cin >> c0.r >> c0.g >> c0.b;
             screen.draw_edge_set(c0, es);
-            std::cout << "";
+            // TODO do i clear es?
+            std::cout << "Finished drawing, to see result run 'display'\n";
+        }
+
+        else if (!command.compare("display")) {
+            screen.display();
         }
 
         else if (!command.compare("save")) {

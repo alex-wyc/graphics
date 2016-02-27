@@ -48,10 +48,13 @@ void transpose_4(float A[4][4]) {
 }
 
 void matrix_multiply_4(float result[4][4], float first[4][4], float second[4][4]) {
-    transpose_4(second);
+    float tmp1[4][4], tmp2[4][4]; // so you can apply the thing to the same goddamn matrix
+    duplicate_matrix(tmp1, first);
+    duplicate_matrix(tmp2, second);
+    transpose_4(tmp2);
     for (int i = 0 ; i < 4 ; i++) {
         for (int j = 0 ; j < 4 ; j++) {
-            result[i][j] = dot_product(first[i], second[j]);
+            result[i][j] = dot_product(tmp1[i], tmp2[j]);
         }
     }
 }
@@ -80,13 +83,14 @@ edge transform(edge e, float A[4][4]) {
     return EDGE(transform(e.first, A), transform(e.second, A));
 }
 
-edge_set translate_figure(edge_set es, float A[4][4]) {
+edge_set transform_figure(edge_set es, float A[4][4]) {
     size_t s = es.size();
     edge_set to_return(s);
 
     for (int i = 0 ; i < s ; i++) {
         to_return[i] = EDGE(transform(es.at(i).first, A), transform(es.at(i).second, A));
     }
+    return to_return;
 }
 
 void generate_dilation_matrix(float A[4][4], float sx, float sy, float sz) {
