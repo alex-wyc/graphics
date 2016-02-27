@@ -3,7 +3,7 @@ CFLAGS= -std=c++11 -O2
 CC=g++
 
 build: $(OBJECTS)
-	$(CC) -o draw_shell $(OBJECTS)
+	$(CC) -o draw_shell.out $(OBJECTS)
 
 main.o: main.cpp graphics.h
 	$(CC) $(CFLAGS) -c main.cpp
@@ -15,9 +15,8 @@ transformation.o: transformation.cpp graphics.h
 	$(CC) $(CFLAGS) -c transformation.cpp
 
 run: build
-	./draw_shell
+	./draw_shell.out
 
 clean:
 	rm *.out
 	rm *.o
-	rm draw_shell
