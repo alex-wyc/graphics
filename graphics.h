@@ -1,6 +1,8 @@
 #ifndef GRAPHICS_H_
 #define GRAPHICS_H_
 
+#include <cstring>
+#include <string>
 #include <cmath>
 #include <tuple>
 #include <vector>
@@ -25,6 +27,7 @@
 
 #define PT(x, y, z) std::make_tuple(x, y, z, 1)
 #define EDGE(pt1, pt2) std::make_pair(pt1, pt2)
+#define ADD_TO_EDGE_SET(es, edge) es.push_back(edge)
 
 typedef struct pixel {
     int r;
@@ -54,14 +57,19 @@ class Canvas {
         void draw_edge(color c, edge e);
         void draw_edge_set(color c, edge_set es);
 
-        void save_ppm(char *file);
+        void display();
+        void save_ppm(const char *file);
 };
+
+void gen_identity_matrix_4(float A[4][4]);
 
 void print_matrix_4(float A[4][4]);
 
 float dot_product(float v1[4], float v2[4]);
 void transpose_4(float A[4][4]);
 void matrix_multiply_4(float result[4][4], float first[4][4], float second[4][4]);
+void matrix_multiply_scalar(float result[4][4], float matrix[4][4], float scalar);
+void duplicate_matrix(float result[4][4], float src[4][4]);
 
 point transform(point v, float A[4][4]);
 edge transform(edge e, float A[4][4]);
