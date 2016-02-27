@@ -80,6 +80,7 @@ int main() {
     c.g = 0;
     screen.draw_edge_set(c, es);
 
+    screen.display();
     screen.save_ppm("line.ppm");
 
     float I[4][4] = {
