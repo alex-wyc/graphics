@@ -35,7 +35,27 @@ void Canvas::clear_screen() {
     }
 }
 
-void Canvas::save_ppm(char *file) {
+void Canvas::display() {
+    FILE *f;
+    
+    f = popen("display", "w");
+
+    fprintf(f, "P3\n%d %d\n%d\n", xres, yres, max_color);
+
+    for (int y = 0 ; y < yres ; y++) {
+        for (int x = 0 ; x < xres ; x++) {
+            fprintf(f, "%d %d %d ", screen[x + y * xres].r,
+                                   screen[x + y * xres].g,
+                                   screen[x + y * xres].b);
+        }
+        fprintf(f, "\n");
+    }
+
+    pclose(f);
+}
+
+
+void Canvas::save_ppm(const char *file) {
     std::ofstream fout(file);
     fout << "P3\n" << xres << " " << yres << " " << max_color << '\n';
 
