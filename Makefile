@@ -5,6 +5,12 @@ CC=g++
 build: $(OBJECTS)
 	$(CC) -o draw_shell.out $(OBJECTS)
 
+flag: draw_flag.o graphics.o transformation.o
+	$(CC) -o a.out draw_flag.o graphics.o transformation.o
+
+draw_flag.o: draw_flag.cpp graphics.h
+	$(CC) $(CFLAGS) -c draw_flag.cpp
+
 main.o: main.cpp graphics.h
 	$(CC) $(CFLAGS) -c main.cpp
 
