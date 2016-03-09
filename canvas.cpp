@@ -81,10 +81,8 @@ void Canvas::draw_line(color c, int x0, int y0, int x1, int y1) {
 
 	//swap points so we're always draing left to right
 	if ( x0 > x1 ) {
-		x = x1;
-		y = y1;
-		x1 = x0;
-		y1 = y0;
+	    draw_line(c, x1, y1, x0, y0);
+        return;
 	}
 
 	//need to know dx and dy for this version

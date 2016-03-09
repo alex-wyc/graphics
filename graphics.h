@@ -43,6 +43,7 @@ typedef std::vector<edge> edge_set;
 
 typedef std::function<float(float)> param_t;
 
+// located in canvas.cpp
 class Canvas {
         int xres, yres, max_color;
         color *screen;
@@ -64,6 +65,7 @@ class Canvas {
         void save_ppm(const char *file);
 };
 
+// linear algebra, located in transformation.cpp
 void gen_identity_matrix_4(float A[4][4]);
 
 void print_matrix_4(float A[4][4]);
@@ -93,6 +95,7 @@ point rotate(point v, int axis, float angle);
 edge rotate(edge e, int axis, float angle);
 edge_set rotate_figure(edge_set es, int axis, float angle);
 
+// curve generation, located in curves.cpp
 edge_set generate_edge_set(param_t func_x, param_t func_y, float t_0, float t_1, float inc);
 
 #endif // GRAPHICS_H_

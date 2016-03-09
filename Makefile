@@ -1,4 +1,4 @@
-OBJECTS=main.o graphics.o transformation.o
+OBJECTS=main.o canvas.o transformation.o
 CFLAGS= -std=c++11 -O2
 CC=g++
 
@@ -8,8 +8,8 @@ build: $(OBJECTS)
 main.o: main.cpp graphics.h
 	$(CC) $(CFLAGS) -c main.cpp
 
-graphics.o: graphics.cpp graphics.h
-	$(CC) $(CFLAGS) -c graphics.cpp
+canvas.o: canvas.cpp graphics.h
+	$(CC) $(CFLAGS) -c canvas.cpp
 
 transformation.o: transformation.cpp graphics.h
 	$(CC) $(CFLAGS) -c transformation.cpp
