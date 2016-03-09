@@ -60,17 +60,10 @@ int main() {
     c.b = MAX_COLOR;
     int d = 10;
 
-    edge_set es = generate_edge_set(sin_x, sin_y, 0, 1, 0.1);
+    edge_set es = generate_edge_set([](float t){return 50 * cos(2 * PI * t) + XRES / 2;},
+                                    [](float t){return 50 * sin(2 * PI * t) + YRES / 2;}, 0, 1, 0.05);
 
-    for (int i = 0 ; i < es.size() ; i++) {
-                    std::cout << "(" << GET_X(es.at(i).first) << ", ";
-                    std::cout << GET_Y(es.at(i).first) << ", ";
-                    std::cout << GET_Z(es.at(i).first) << ")--(";
-                    std::cout << GET_X(es.at(i).second) << ", ";
-                    std::cout << GET_Y(es.at(i).second) << ", ";
-                    std::cout << GET_Z(es.at(i).second) << "), ";
-                }//for (int   = 0 ; i < 20 ; i++) {
-    std::cout << "\n";
+    //for (int   = 0 ; i < 20 ; i++) {
     //    screen.draw_line(c, XRES/2, YRES/2 + (20 - i) * d, XRES/2 + i * d, YRES/2);
     //    screen.draw_line(c, XRES/2, YRES/2 - (20 - i) * d, XRES/2 - i * d, YRES/2);
     //    screen.draw_line(c, XRES/2, YRES/2 - (20 - i) * d, XRES/2 + i * d, YRES/2);
