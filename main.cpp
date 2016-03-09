@@ -3,6 +3,16 @@
 
 #include "graphics.h"
 
+#define PI 3.14159265359
+
+float sin_x(float t) {
+    return 25 * cos(2 * PI * t) + XRES / 2;
+}
+
+float sin_y(float t) {
+    return 25 * sin(2 * PI * t) + YRES / 2;
+}
+
 int main() {
     Canvas screen; // default vals
 
@@ -47,59 +57,26 @@ int main() {
     //}}}
 
     c.r = c.g = MAX_COLOR;
-    c.b = 0;
+    c.b = MAX_COLOR;
     int d = 10;
 
-    edge_set es;
+    edge_set es = generate_edge_set(sin_x, sin_y, 0, 1, 0.1);
 
-    //for (int i = 0 ; i < 20 ; i++) {
+    for (int i = 0 ; i < es.size() ; i++) {
+                    std::cout << "(" << GET_X(es.at(i).first) << ", ";
+                    std::cout << GET_Y(es.at(i).first) << ", ";
+                    std::cout << GET_Z(es.at(i).first) << ")--(";
+                    std::cout << GET_X(es.at(i).second) << ", ";
+                    std::cout << GET_Y(es.at(i).second) << ", ";
+                    std::cout << GET_Z(es.at(i).second) << "), ";
+                }//for (int   = 0 ; i < 20 ; i++) {
+    std::cout << "\n";
     //    screen.draw_line(c, XRES/2, YRES/2 + (20 - i) * d, XRES/2 + i * d, YRES/2);
     //    screen.draw_line(c, XRES/2, YRES/2 - (20 - i) * d, XRES/2 - i * d, YRES/2);
     //    screen.draw_line(c, XRES/2, YRES/2 - (20 - i) * d, XRES/2 + i * d, YRES/2);
     //    screen.draw_line(c, XRES/2, YRES/2 + (20 - i) * d, XRES/2 - i * d, YRES/2);
     //}
-
-    for (int i = 0 ; i < 20 ; i++) {
-        es.push_back(EDGE(PT(XRES/2, YRES/2 + (20 - i) * d, 0), PT(XRES/2 + i * d, YRES/2, 0)));
-        es.push_back(EDGE(PT(XRES/2, YRES/2 - (20 - i) * d, 0), PT(XRES/2 - i * d, YRES/2, 0)));
-        es.push_back(EDGE(PT(XRES/2, YRES/2 - (20 - i) * d, 0), PT(XRES/2 + i * d, YRES/2, 0)));
-        es.push_back(EDGE(PT(XRES/2, YRES/2 + (20 - i) * d, 0), PT(XRES/2 - i * d, YRES/2, 0)));
-    }
-
+    
     screen.draw_edge_set(c, es);
-    es = dilate_figure(es, 1.5, 1, 1);
-
-    c.b = MAX_COLOR;
-    screen.draw_edge_set(c, es);
-
-    es = translate_figure(es, -200, 30, 0);
-    c.r = 0;
-    screen.draw_edge_set(c, es);
-
-    es = rotate_figure(es, Z, 30);
-    c.g = 0;
-    screen.draw_edge_set(c, es);
-
     screen.display();
-    screen.save_ppm("line.ppm");
-
-    float I[4][4] = {
-        {1, 0, 0, 0},
-        {0, 1, 0, 0},
-        {0, 0, 1, 0},
-        {0, 0, 0, 1}
-    };
-
-    float A[4][4] = {
-        {1, 2, 3, 4},
-        {5, 6, 7, 8},
-        {9, 10, 11, 12},
-        {13, 14, 15, 16}
-    };
-
-    float B[4][4];
-
-    matrix_multiply_4(B, I, A);
-
-    print_matrix_4(B);
 }

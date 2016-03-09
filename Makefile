@@ -1,5 +1,5 @@
 build:
-	g++ -std=c++11 main.cpp graphics.cpp transformation.cpp -o line.out
+	g++ -std=c++11 main.cpp graphics.cpp transformation.cpp curves.cpp -o line.out
 
 generate: build
 	./line.out

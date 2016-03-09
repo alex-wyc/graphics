@@ -88,7 +88,7 @@ void Canvas::draw_line(color c, int x0, int y0, int x1, int y1) {
     if (y1 > y0) {
         d = 2 * A + B;
         if (-1 * B > A) { // octant '1'
-            while (x < x1) {
+            while (x <= x1) {
                 //std::cout << "point (" << x << ", " << y << ") plotted" << std::endl;
                 plot(c, x, y);
 
@@ -102,7 +102,7 @@ void Canvas::draw_line(color c, int x0, int y0, int x1, int y1) {
             }
         }
         else { // octant '2'
-            while (y < y1) {
+            while (y <= y1) {
                 plot(c, x, y);
 
                 if (d < 0) {
@@ -119,7 +119,7 @@ void Canvas::draw_line(color c, int x0, int y0, int x1, int y1) {
     else {
         d = 2 * A - B;
         if (A > B) {
-            while (x < x1) { // octant '8'
+            while (x <= x1) { // octant '8'
                 plot(c, x, y);
 
                 if (d < 0) {
@@ -132,7 +132,7 @@ void Canvas::draw_line(color c, int x0, int y0, int x1, int y1) {
             }
         }
         else {
-            while (y > y1) { // octant '7'
+            while (y >= y1) { // octant '7'
                 plot(c, x, y);
 
                 if (d > 0) {
