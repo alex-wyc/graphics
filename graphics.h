@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <fstream>
 #include <iostream>
+#include <functional>
 
 #define XRES 500
 #define YRES 500
@@ -39,6 +40,8 @@ typedef std::pair<int, int> coor_2d;
 typedef std::tuple<float, float, float, float> point;
 typedef std::pair<point, point> edge;
 typedef std::vector<edge> edge_set;
+
+typedef std::function<float(float)> param_t;
 
 class Canvas {
         int xres, yres, max_color;
@@ -89,5 +92,7 @@ void generate_rotation_matrix(float A[4][4], int axis, float angle);
 point rotate(point v, int axis, float angle);
 edge rotate(edge e, int axis, float angle);
 edge_set rotate_figure(edge_set es, int axis, float angle);
+
+edge_set generate_edge_set(param_t func_x, param_t func_y, float t_0, float t_1, float inc);
 
 #endif // GRAPHICS_H_
