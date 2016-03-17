@@ -48,6 +48,7 @@ edge_set hermite_curve(float x0, float y0, float dx0, float dy0,
 
     return generate_edge_set(func_x, func_y, 0, 1, inc);
 }
+
 edge_set bezier_curve(float x0, float y0,
                       float x1, float y1,
                       float x2, float y2,
