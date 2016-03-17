@@ -20,6 +20,8 @@
 #define Z 2
 #define W 3
 
+#define DEFAULT_INC 0.1
+
 // I <3 macro hacks
 #define GET_X(p) std::get<0>(p)
 #define GET_Y(p) std::get<1>(p)
@@ -74,6 +76,7 @@ float dot_product(float v1[4], float v2[4]);
 void transpose_4(float A[4][4]);
 void matrix_multiply_4(float result[4][4], float first[4][4], float second[4][4]);
 void matrix_multiply_scalar(float result[4][4], float matrix[4][4], float scalar);
+void matrix_multiply_vector(float result[4], float matrix[4][4], float vec[4]);
 void duplicate_matrix(float result[4][4], float src[4][4]);
 
 point transform(point v, float A[4][4]);
@@ -97,5 +100,12 @@ edge_set rotate_figure(edge_set es, int axis, float angle);
 
 // curve generation, located in curves.cpp
 edge_set generate_edge_set(param_t func_x, param_t func_y, float t_0, float t_1, float inc);
+edge_set hermite_curve(float x0, float y0, float dx0, float dy0,
+                       float x1, float y1, float dx1, float dy1, float inc);
+edge_set bezier_curve(float x0, float y0,
+                      float x1, float y1,
+                      float x2, float y2,
+                      float x3, float y3,
+                      float inc);
 
 #endif // GRAPHICS_H_

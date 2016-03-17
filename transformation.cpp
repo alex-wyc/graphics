@@ -67,6 +67,13 @@ void matrix_multiply_scalar(float result[4][4], float matrix[4][4], float scalar
     }
 }
 
+void matrix_multiply_vector(float result[4], float matrix[4][4], float vec[4]) {
+    result[0] = dot_product(vec, matrix[0]);
+    result[1] = dot_product(vec, matrix[1]);
+    result[2] = dot_product(vec, matrix[2]);
+    result[3] = dot_product(vec, matrix[3]);
+}
+
 void duplicate_matrix(float result[4][4], float src[4][4]) {
     std::memcpy(result, src, sizeof(float) * 4 * 4);
 }
