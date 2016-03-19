@@ -20,7 +20,9 @@
 #define Z 2
 #define W 3
 
-#define DEFAULT_INC 0.1
+#define PI 3.14159265359
+
+#define DEFAULT_INC 0.01
 
 // I <3 macro hacks
 #define GET_X(p) std::get<0>(p)
@@ -31,6 +33,7 @@
 #define PT(x, y, z) std::make_tuple(x, y, z, 1)
 #define EDGE(pt1, pt2) std::make_pair(pt1, pt2)
 #define ADD_TO_EDGE_SET(es, edge) es.push_back(edge)
+#define CONCAT_EDGE_SETS(es1, es2) es1.insert(es1.end(), es2.begin(), es2.end())
 
 typedef struct pixel {
     int r;
@@ -99,13 +102,14 @@ edge rotate(edge e, int axis, float angle);
 edge_set rotate_figure(edge_set es, int axis, float angle);
 
 // curve generation, located in curves.cpp
-edge_set generate_edge_set(param_t func_x, param_t func_y, float t_0, float t_1, float inc);
+edge_set generate_edge_set(param_t func_x, param_t func_y, float t_0, float t_1, float inc = DEFAULT_INC);
+edge_set circle(float x0, float y0, float r, float inc = DEFAULT_INC);
 edge_set hermite_curve(float x0, float y0, float dx0, float dy0,
-                       float x1, float y1, float dx1, float dy1, float inc);
+                       float x1, float y1, float dx1, float dy1, float inc = DEFAULT_INC);
 edge_set bezier_curve(float x0, float y0,
                       float x1, float y1,
                       float x2, float y2,
                       float x3, float y3,
-                      float inc);
+                      float inc = DEFAULT_INC);
 
 #endif // GRAPHICS_H_

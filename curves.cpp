@@ -3,7 +3,7 @@
 #include "graphics.h"
 
 edge_set generate_edge_set(param_t func_x, param_t func_y,
-                           float t0, float t1, float inc = DEFAULT_INC) {
+                           float t0, float t1, float inc) {
     assert((t1 > t0 && inc > 0) || (t1 < t0 && inc < 0));
     edge_set es;
     float x0 = func_x(t0);
@@ -21,9 +21,19 @@ edge_set generate_edge_set(param_t func_x, param_t func_y,
     return es;
 }
 
+edge_set circle(float x0, float y0, float r, float inc) {
+    std::function<float(float)> func_x = [x0, r](float t) {
+        return r * cos(2 * PI * t) + x0;
+    };
+    std::function<float(float)> func_y = [y0, r](float t) {
+        return r * sin(2 * PI * t) + y0;
+    };
+    return generate_edge_set(func_x, func_y, 0, 1, inc);
+}
+
 edge_set hermite_curve(float x0, float y0, float dx0, float dy0,
                        float x1, float y1, float dx1, float dy1,
-                       float inc = DEFAULT_INC) {
+                       float inc) {
     float given_x[4] = {x0, dx0, x1, dx1};
     float given_y[4] = {y0, dy0, y1, dy1};
 
@@ -53,7 +63,7 @@ edge_set bezier_curve(float x0, float y0,
                       float x1, float y1,
                       float x2, float y2,
                       float x3, float y3,
-                      float inc = DEFAULT_INC) {
+                      float inc) {
 
     std::function<float(float)> func_x = [x0, x1, x2, x3] (float t) {
         return x0 * pow((1 - t), 3) + 3 * x1 * pow((1 - t), 2) * t + 3 * x2 * (1 - t) * pow(t, 2) + x3 * pow(t, 3);
