@@ -1,9 +1,9 @@
-OBJECTS=canvas.o transformation.o curves.o
+OBJECTS=canvas.o transformation.o curves.o parser.o
 CFLAGS= -std=c++11 -O2
 CC=g++
 
-test: $(OBJECTS)
-	$(CC) $(CFLAGS) main.cpp $(OBJECTS)
+script: $(OBJECTS)
+	$(CC) $(CFLAGS) -o run_script.out main.cpp $(OBJECTS)
 
 build: shell.o $(OBJECTS)
 	$(CC) -o shell.out $(OBJECTS)
@@ -16,6 +16,9 @@ canvas.o: canvas.cpp graphics.h
 
 curves.o: curves.cpp graphics.h
 	$(CC) $(CFLAGS) -c curves.cpp
+
+parser.o: parser.cpp graphics.h
+	$(CC) $(CFLAGS) -c parser.cpp
 
 transformation.o: transformation.cpp graphics.h
 	$(CC) $(CFLAGS) -c transformation.cpp

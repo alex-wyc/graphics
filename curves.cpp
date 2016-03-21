@@ -34,6 +34,7 @@ edge_set circle(float x0, float y0, float r, float inc) {
 edge_set hermite_curve(float x0, float y0, float dx0, float dy0,
                        float x1, float y1, float dx1, float dy1,
                        float inc) {
+    /* FIXME -- more like dafaq is the range for dx and dy
     float given_x[4] = {x0, dx0, x1, dx1};
     float given_y[4] = {y0, dy0, y1, dy1};
 
@@ -55,6 +56,15 @@ edge_set hermite_curve(float x0, float y0, float dx0, float dy0,
     std::function<float(float)> func_y = [res_y](float t) {
         return res_y[0] * pow(t, 3) + res_y[1] * pow(t, 2) + res_y[2] * t  + res_y[3];
     };
+    */
+
+    std::function<float(float)> func_x = [x0, x1, dx0, dx1](float t) {
+        return pow(t, 3) * (2 * x0 - 2 * x1 + dx0 - dx1) + pow(t, 2) * (-3 * x0 + 3 * x1 + -2 * dx0 - dx1) + t * dx0 + x0;
+    };
+    std::function<float(float)> func_y = [y0, y1, dy0, dy1](float t) {
+        return pow(t, 3) * (2 * y0 - 2 * y1 + dy0 - dy1) + pow(t, 2) * (-3 * y0 + 3 * y1 + -2 * dy0 - dy1) + t * dy0 + y0;
+    };
+
 
     return generate_edge_set(func_x, func_y, 0, 1, inc);
 }

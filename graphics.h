@@ -70,6 +70,9 @@ class Canvas {
         void save_ppm(const char *file);
 };
 
+void parse_file(char *filename, Canvas *screen, float A[4][4], edge_set *es);
+
+
 // linear algebra, located in transformation.cpp
 void gen_identity_matrix_4(float A[4][4]);
 
@@ -102,7 +105,7 @@ edge rotate(edge e, int axis, float angle);
 edge_set rotate_figure(edge_set es, int axis, float angle);
 
 // curve generation, located in curves.cpp
-edge_set generate_edge_set(param_t func_x, param_t func_y, float t_0, float t_1, float inc = DEFAULT_INC);
+edge_set generate_edge_set(param_t func_x, param_t func_y, float t_0 = 0, float t_1 = 1, float inc = DEFAULT_INC);
 edge_set circle(float x0, float y0, float r, float inc = DEFAULT_INC);
 edge_set hermite_curve(float x0, float y0, float dx0, float dy0,
                        float x1, float y1, float dx1, float dy1, float inc = DEFAULT_INC);
