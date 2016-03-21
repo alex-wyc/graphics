@@ -23,8 +23,11 @@ parser.o: parser.cpp graphics.h
 transformation.o: transformation.cpp graphics.h
 	$(CC) $(CFLAGS) -c transformation.cpp
 
-run: build
+run_shell: build
 	./shell.out
+
+run_script: script
+	./run_script.out script
 
 clean:
 	rm *.out
