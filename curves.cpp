@@ -10,7 +10,7 @@ edge_set generate_edge_set(param_t func_x, param_t func_y,
     float y0 = func_y(t0);
     float x, y;
 
-    for (float t = t0 ; t < t1 ; t += inc) {
+    for (float t = t0 ; t < t1 + inc; t += inc) {
         x = func_x(t);
         y = func_y(t);
         ADD_TO_EDGE_SET(es, EDGE(PT(x0, y0, 0), PT(x, y, 0)));
@@ -31,12 +31,15 @@ edge_set circle(float x0, float y0, float r, float inc) {
     return generate_edge_set(func_x, func_y, 0, 1, inc);
 }
 
-edge_set hermite_curve(float x0, float y0, float dx0, float dy0,
-                       float x1, float y1, float dx1, float dy1,
+edge_set hermite_curve(float x0, float y0,
+                       float x1, float y1,
+                       float x2, float y2,
+                       float x3, float y3,
                        float inc) {
-    /* FIXME -- more like dafaq is the range for dx and dy
-    float given_x[4] = {x0, dx0, x1, dx1};
-    float given_y[4] = {y0, dy0, y1, dy1};
+
+    /* FIXME -- more like dafaq is the range for dx and dy */
+    float given_x[4] = {x0, x2, x1 - x0, x3 - x2};
+    float given_y[4] = {y0, y2, y1 - y0, y3 - y2};
 
     float inverse[4][4] = {
         {2, -2, 1, 1},
@@ -54,16 +57,15 @@ edge_set hermite_curve(float x0, float y0, float dx0, float dy0,
     };
 
     std::function<float(float)> func_y = [res_y](float t) {
-        return res_y[0] * pow(t, 3) + res_y[1] * pow(t, 2) + res_y[2] * t  + res_y[3];
+        return res_y[0] * pow(t, 3) + res_y[1] * pow(t, 2) + res_y[2] * t + res_y[3];
     };
-    */
 
-    std::function<float(float)> func_x = [x0, x1, dx0, dx1](float t) {
-        return pow(t, 3) * (2 * x0 - 2 * x1 + dx0 - dx1) + pow(t, 2) * (-3 * x0 + 3 * x1 + -2 * dx0 - dx1) + t * dx0 + x0;
-    };
-    std::function<float(float)> func_y = [y0, y1, dy0, dy1](float t) {
-        return pow(t, 3) * (2 * y0 - 2 * y1 + dy0 - dy1) + pow(t, 2) * (-3 * y0 + 3 * y1 + -2 * dy0 - dy1) + t * dy0 + y0;
-    };
+    //std::function<float(float)> func_x = [x0, x1, dx0, dx1](float t) {
+    //    return pow(t, 3) * (2 * x0 - 2 * x1 + dx0 - dx1) + pow(t, 2) * (-3 * x0 + 3 * x1 + -2 * dx0 - dx1) + t * dx0 + x0;
+    //};
+    //std::function<float(float)> func_y = [y0, y1, dy0, dy1](float t) {
+    //    return pow(t, 3) * (2 * y0 - 2 * y1 + dy0 - dy1) + pow(t, 2) * (-3 * y0 + 3 * y1 + -2 * dy0 - dy1) + t * dy0 + y0;
+    //};
 
 
     return generate_edge_set(func_x, func_y, 0, 1, inc);

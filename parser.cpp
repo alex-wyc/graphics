@@ -43,6 +43,10 @@ void parse_file(char *file, Canvas *screen, float A[4][4], edge_set *es) {
     while (!fin.eof()) {
         fin >> command;
         switch (command[0]) {
+            case '#': // comment -- do nothing, scan next
+                fin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                break;
+
             case 'l': // line
                 for (int i = 0 ; i < 6 ; i++) {
                     fin >> args[i];

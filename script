@@ -1,0 +1,35 @@
+ident
+bezier -100 0 -50 50 50 -50 100 0
+bezier 100 0 50 50 -50 -50 -100 0
+bezier 0 -100 50 -50 -50 50 0 100
+bezier 0 100 50 50 -50 -50 0 -100
+translate 250 250 0
+apply
+display
+ident
+translate -250 -250 0
+zrotate 45
+translate 250 250 0
+apply
+display
+ident
+translate -250 -250 0
+scale 2 2 1
+zrotate 22.5
+translate 250 250 0
+apply
+display
+ident
+translate -250 -250 0
+zrotate 45
+translate 250 250 0
+apply
+display
+circle 250 250 50
+display
+circle 250 250 100
+display
+circle 250 250 200
+display
+save submission.ppm
+quit
