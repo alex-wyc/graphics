@@ -13,8 +13,6 @@
 
 #include "graphics.h"
 
-#define PI 3.1415926535
-
 void gen_identity_matrix_4(float A[4][4]) {
     A[0][0] = 1; A[0][1] = 0; A[0][2] = 0; A[0][3] = 0;
     A[1][0] = 0; A[1][1] = 1; A[1][2] = 0; A[1][3] = 0;
@@ -65,6 +63,13 @@ void matrix_multiply_scalar(float result[4][4], float matrix[4][4], float scalar
             result[i][j] = scalar * matrix[i][j];
         }
     }
+}
+
+void matrix_multiply_vector(float result[4], float matrix[4][4], float vec[4]) {
+    result[0] = dot_product(vec, matrix[0]);
+    result[1] = dot_product(vec, matrix[1]);
+    result[2] = dot_product(vec, matrix[2]);
+    result[3] = dot_product(vec, matrix[3]);
 }
 
 void duplicate_matrix(float result[4][4], float src[4][4]) {

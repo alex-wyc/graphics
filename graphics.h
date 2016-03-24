@@ -20,6 +20,10 @@
 #define Z 2
 #define W 3
 
+#define PI 3.14159265359
+
+#define DEFAULT_INC 0.01
+
 // I <3 macro hacks
 #define GET_X(p) std::get<0>(p)
 #define GET_Y(p) std::get<1>(p)
@@ -29,6 +33,7 @@
 #define PT(x, y, z) std::make_tuple(x, y, z, 1)
 #define EDGE(pt1, pt2) std::make_pair(pt1, pt2)
 #define ADD_TO_EDGE_SET(es, edge) es.push_back(edge)
+#define CONCAT_EDGE_SETS(es1, es2) es1.insert(es1.end(), es2.begin(), es2.end())
 
 typedef struct pixel {
     int r;
@@ -65,6 +70,9 @@ class Canvas {
         void save_ppm(const char *file);
 };
 
+// parsing program data, located in parser.cpp
+void parse_file(char *filename, Canvas *screen, float A[4][4], edge_set *es);
+
 // linear algebra, located in transformation.cpp
 void gen_identity_matrix_4(float A[4][4]);
 
@@ -74,6 +82,7 @@ float dot_product(float v1[4], float v2[4]);
 void transpose_4(float A[4][4]);
 void matrix_multiply_4(float result[4][4], float first[4][4], float second[4][4]);
 void matrix_multiply_scalar(float result[4][4], float matrix[4][4], float scalar);
+void matrix_multiply_vector(float result[4], float matrix[4][4], float vec[4]);
 void duplicate_matrix(float result[4][4], float src[4][4]);
 
 point transform(point v, float A[4][4]);
@@ -96,6 +105,17 @@ edge rotate(edge e, int axis, float angle);
 edge_set rotate_figure(edge_set es, int axis, float angle);
 
 // curve generation, located in curves.cpp
-edge_set generate_edge_set(param_t func_x, param_t func_y, float t_0, float t_1, float inc);
+edge_set generate_edge_set(param_t func_x, param_t func_y, float t_0 = 0, float t_1 = 1, float inc = DEFAULT_INC);
+edge_set circle(float x0, float y0, float r, float inc = DEFAULT_INC);
+edge_set hermite_curve(float x0, float y0,
+                       float x1, float y1,
+                       float x2, float y2,
+                       float x3, float y3,
+                       float inc = DEFAULT_INC);
+edge_set bezier_curve(float x0, float y0,
+                      float x1, float y1,
+                      float x2, float y2,
+                      float x3, float y3,
+                      float inc = DEFAULT_INC);
 
 #endif // GRAPHICS_H_

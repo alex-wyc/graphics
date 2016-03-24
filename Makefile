@@ -1,21 +1,33 @@
-OBJECTS=main.o canvas.o transformation.o
+OBJECTS=canvas.o transformation.o curves.o parser.o
 CFLAGS= -std=c++11 -O2
 CC=g++
 
-build: $(OBJECTS)
-	$(CC) -o draw_shell.out $(OBJECTS)
+script: $(OBJECTS)
+	$(CC) $(CFLAGS) -o run_script.out main.cpp $(OBJECTS)
 
-main.o: main.cpp graphics.h
-	$(CC) $(CFLAGS) -c main.cpp
+build: shell.o $(OBJECTS)
+	$(CC) -o shell.out $(OBJECTS)
+
+shell.o: shell.cpp graphics.h
+	$(CC) $(CFLAGS) -c shell.cpp
 
 canvas.o: canvas.cpp graphics.h
 	$(CC) $(CFLAGS) -c canvas.cpp
 
+curves.o: curves.cpp graphics.h
+	$(CC) $(CFLAGS) -c curves.cpp
+
+parser.o: parser.cpp graphics.h
+	$(CC) $(CFLAGS) -c parser.cpp
+
 transformation.o: transformation.cpp graphics.h
 	$(CC) $(CFLAGS) -c transformation.cpp
 
-run: build
-	./draw_shell.out
+run_shell: build
+	./shell.out
+
+run_script: script
+	./run_script.out script
 
 clean:
 	rm *.out
