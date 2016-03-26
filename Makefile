@@ -1,4 +1,4 @@
-OBJECTS=canvas.o transformation.o curves.o parser.o
+OBJECTS=canvas.o transformation.o curves.o parser.o util.o 3d.o
 CFLAGS= -std=c++11 -O2
 CC=g++
 
@@ -19,6 +19,12 @@ curves.o: curves.cpp graphics.h
 
 parser.o: parser.cpp graphics.h
 	$(CC) $(CFLAGS) -c parser.cpp
+
+util.o: util.cpp graphics.h
+	$(CC) $(CFLAGS) -c util.cpp
+
+3d.o: 3d.cpp graphics.h
+	$(CC) $(CFLAGS) -c 3d.cpp
 
 transformation.o: transformation.cpp graphics.h
 	$(CC) $(CFLAGS) -c transformation.cpp

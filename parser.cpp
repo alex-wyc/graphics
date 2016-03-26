@@ -42,6 +42,7 @@ void parse_file(char *file, Canvas *screen, float A[4][4], edge_set *es) {
 
     while (!fin.eof()) {
         fin >> command;
+        std::cout << ":" << command << ":\n";
         switch (command[0]) {
             case '#': // comment -- do nothing, scan next
                 fin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -56,10 +57,15 @@ void parse_file(char *file, Canvas *screen, float A[4][4], edge_set *es) {
 
                 break;
 
-            case 'c': // circle
-                fin >> args[0] >> args[1] >> args[2];
-                tmp = circle(args[0], args[1], args[2]);
-                es->insert(es->end(), tmp.begin(), tmp.end());
+            case 'c': // circle or clear
+                if (command[1] == 'i') { // circle
+                    fin >> args[0] >> args[1] >> args[2];
+                    tmp = circle(args[0], args[1], args[2]);
+                    es->insert(es->end(), tmp.begin(), tmp.end());
+                }
+                else if (command[1] == 'l') { // clear
+                    es->clear();
+                }
                 break;
 
             case 'h': // hermite
@@ -70,19 +76,28 @@ void parse_file(char *file, Canvas *screen, float A[4][4], edge_set *es) {
                 es->insert(es->end(), tmp.begin(), tmp.end());
                 break;
 
-            case 'b': // bezier
-                for (int i = 0 ; i < 8 ; i++) {
-                    fin >> args[i];
+            case 'b': // bezier or box
+                if (command[1] == 'e') { // bezier
+                    for (int i = 0 ; i < 8 ; i++) {
+                        fin >> args[i];
+                    }
+                    tmp = bezier_curve(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
+                    es->insert(es->end(), tmp.begin(), tmp.end());
                 }
-                tmp = bezier_curve(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
-                es->insert(es->end(), tmp.begin(), tmp.end());
+                else if (command[1] == 'o') { // box
+                    for (int i = 0 ; i < 6 ; i++) {
+                        fin >> args[i];
+                    }
+                    tmp = box(args[0], args[1], args[2], args[3], args[4], args[5]);
+                    es->insert(es->end(), tmp.begin(), tmp.end());
+                }
                 break;
 
             case 'i': // ident
                 gen_identity_matrix_4(A);
                 break;
 
-            case 's': // scale
+            case 's': // scale or save or sphere
                 if (command[1] == 'c') { // scale
                     fin >> args[0] >> args[1] >> args[2];
                     generate_dilation_matrix(current, args[0], args[1], args[2]);
@@ -94,12 +109,26 @@ void parse_file(char *file, Canvas *screen, float A[4][4], edge_set *es) {
                     screen->draw_edge_set(c, *es);
                     screen->save_ppm(command);
                 }
+                else if (command[1] == 'p') { // sphere
+                    fin >> args[0] >> args[1] >> args[2] >> args[3];
+                    point_set ps = generate_sphere(args[0], args[1], args[2], args[3], DEFAULT_INC);
+                    tmp = to_edge_set(ps);
+                    es->insert(es->end(), tmp.begin(), tmp.end());
+                }
                 break;
 
-            case 't': // translate
-                fin >> args[0] >> args[1] >> args[2];
-                generate_translation_matrix(current, args[0], args[1], args[2]);
-                matrix_multiply_4(A, current, A);
+            case 't': // translate or torus
+                if (command[1] == 'r') {
+                    fin >> args[0] >> args[1] >> args[2];
+                    generate_translation_matrix(current, args[0], args[1], args[2]);
+                    matrix_multiply_4(A, current, A);
+                }
+                else if (command[1] == 'o') {
+                    fin >> args[0] >> args[1] >> args[2] >> args[3] >> args[4];
+                    point_set ps = generate_torus(args[0], args[1], args[2], args[3], args[4]);
+                    tmp = to_edge_set(ps);
+                    es->insert(es->end(), tmp.begin(), tmp.end());
+                }
                 break;
 
             case 'x': // xrotate
@@ -134,6 +163,10 @@ void parse_file(char *file, Canvas *screen, float A[4][4], edge_set *es) {
             case 'q': //quit
                 return;
                 break;
+
+            default:
+                std::cout << "Parser error:\ncommand not found: " << command << '\n';
+                return;
         }
     }
 }
