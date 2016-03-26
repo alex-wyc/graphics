@@ -79,7 +79,7 @@ class Canvas {
 edge_set to_edge_set(point_set ps);
 
 // parsing program data, located in parser.cpp
-void parse_file(char *filename, Canvas *screen, float A[4][4], edge_set *es);
+void parse_file(char *filename, int debug = 0);
 
 // linear algebra, located in transformation.cpp
 void gen_identity_matrix_4(float A[4][4]);

@@ -29,20 +29,24 @@
  *
  * save: draw the lines of the point matrix to the screen/frame save the screen/frame to a file - takes 1 argument (file name)
  */
-void parse_file(char *file, Canvas *screen, float A[4][4], edge_set *es) {
+void parse_file(char *file, int debug) {
+    Canvas screen;
     char command[256];
     float args[8] = {0};
-    edge_set tmp;
-    float current[4][4];
+    edge_set es, tmp;
+    float current[4][4], A[4][4];
     color c;
     c.r = c.g = c.b = 255;
+    size_t sz;
 
     // FIXME add ability to read from term
     std::ifstream fin(file);
 
     while (!fin.eof()) {
         fin >> command;
-        std::cout << ":" << command << ":\n";
+        if (debug) {
+            std::cout << ":" << command << ":\n";
+        }
         switch (command[0]) {
             case '#': // comment -- do nothing, scan next
                 fin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -52,7 +56,7 @@ void parse_file(char *file, Canvas *screen, float A[4][4], edge_set *es) {
                 for (int i = 0 ; i < 6 ; i++) {
                     fin >> args[i];
                 }
-                es->push_back(EDGE(PT(args[0], args[1], args[2]),
+                es.push_back(EDGE(PT(args[0], args[1], args[2]),
                                    PT(args[3], args[4], args[5])));
 
                 break;
@@ -61,10 +65,13 @@ void parse_file(char *file, Canvas *screen, float A[4][4], edge_set *es) {
                 if (command[1] == 'i') { // circle
                     fin >> args[0] >> args[1] >> args[2];
                     tmp = circle(args[0], args[1], args[2]);
-                    es->insert(es->end(), tmp.begin(), tmp.end());
+                    sz = tmp.size();
+                    for (int i = 0 ; i < sz ; i++) {
+                        es.push_back(tmp.at(i));
+                    }
                 }
                 else if (command[1] == 'l') { // clear
-                    es->clear();
+                    es.clear();
                 }
                 break;
 
@@ -73,7 +80,10 @@ void parse_file(char *file, Canvas *screen, float A[4][4], edge_set *es) {
                     fin >> args[i];
                 }
                 tmp = hermite_curve(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
-                es->insert(es->end(), tmp.begin(), tmp.end());
+                sz = tmp.size();
+                for (int i = 0 ; i < sz ; i++) {
+                    es.push_back(tmp.at(i));
+                }
                 break;
 
             case 'b': // bezier or box
@@ -82,14 +92,20 @@ void parse_file(char *file, Canvas *screen, float A[4][4], edge_set *es) {
                         fin >> args[i];
                     }
                     tmp = bezier_curve(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
-                    es->insert(es->end(), tmp.begin(), tmp.end());
+                    sz = tmp.size();
+                    for (int i = 0 ; i < sz ; i++) {
+                        es.push_back(tmp.at(i));
+                    }
                 }
                 else if (command[1] == 'o') { // box
                     for (int i = 0 ; i < 6 ; i++) {
                         fin >> args[i];
                     }
                     tmp = box(args[0], args[1], args[2], args[3], args[4], args[5]);
-                    es->insert(es->end(), tmp.begin(), tmp.end());
+                    sz = tmp.size();
+                    for (int i = 0 ; i < sz ; i++) {
+                        es.push_back(tmp.at(i));
+                    }
                 }
                 break;
 
@@ -105,15 +121,18 @@ void parse_file(char *file, Canvas *screen, float A[4][4], edge_set *es) {
                 }
                 else if (command[1] == 'a') { // save
                     fin >> command; // filename
-                    screen->clear_screen();
-                    screen->draw_edge_set(c, *es);
-                    screen->save_ppm(command);
+                    screen.clear_screen();
+                    screen.draw_edge_set(c, es);
+                    screen.save_ppm(command);
                 }
                 else if (command[1] == 'p') { // sphere
                     fin >> args[0] >> args[1] >> args[2] >> args[3];
                     point_set ps = generate_sphere(args[0], args[1], args[2], args[3], DEFAULT_INC);
                     tmp = to_edge_set(ps);
-                    es->insert(es->end(), tmp.begin(), tmp.end());
+                    sz = tmp.size();
+                    for (int i = 0 ; i < sz ; i++) {
+                        es.push_back(tmp.at(i));
+                    }
                 }
                 break;
 
@@ -127,7 +146,10 @@ void parse_file(char *file, Canvas *screen, float A[4][4], edge_set *es) {
                     fin >> args[0] >> args[1] >> args[2] >> args[3] >> args[4];
                     point_set ps = generate_torus(args[0], args[1], args[2], args[3], args[4]);
                     tmp = to_edge_set(ps);
-                    es->insert(es->end(), tmp.begin(), tmp.end());
+                    sz = tmp.size();
+                    for (int i = 0 ; i < sz ; i++) {
+                        es.push_back(tmp.at(i));
+                    }
                 }
                 break;
 
@@ -150,14 +172,13 @@ void parse_file(char *file, Canvas *screen, float A[4][4], edge_set *es) {
                 break;
 
             case 'a': // apply
-                tmp = transform_figure(*es, A);
-                es = &tmp;
+                es = transform_figure(es, A);
                 break;
 
             case 'd': // display
-                screen->clear_screen();
-                screen->draw_edge_set(c, *es);
-                screen->display();
+                screen.clear_screen();
+                screen.draw_edge_set(c, es);
+                screen.display();
                 break;
 
             case 'q': //quit
