@@ -1,7 +1,7 @@
 #include <cstdlib>
 #include <iostream>
 
-#include "graphics.h"
+#include "lib/graphics.h"
 
 int main(int argc, char *argv[]) {
     if (argc == 2) {

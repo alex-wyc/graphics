@@ -1,40 +1,33 @@
-OBJECTS=canvas.o transformation.o curves.o parser.o util.o 3d.o
+OBJECTS=bin/canvas.o bin/transformation.o bin/curves.o bin/parser.o bin/util.o bin/3d.o
 CFLAGS= -std=c++11 -O2
 CC=g++
 
 script: $(OBJECTS)
 	$(CC) $(CFLAGS) -o run_script.out main.cpp $(OBJECTS)
 
-build: shell.o $(OBJECTS)
-	$(CC) -o shell.out $(OBJECTS)
+bin/canvas.o: lib/canvas.cpp lib/graphics.h
+	$(CC) $(CFLAGS) -c lib/canvas.cpp -o bin/canvas.o
 
-shell.o: shell.cpp graphics.h
-	$(CC) $(CFLAGS) -c shell.cpp
+bin/curves.o: lib/curves.cpp lib/graphics.h
+	$(CC) $(CFLAGS) -c lib/curves.cpp -o bin/curves.o
 
-canvas.o: canvas.cpp graphics.h
-	$(CC) $(CFLAGS) -c canvas.cpp
+bin/parser.o: lib/parser.cpp lib/graphics.h
+	$(CC) $(CFLAGS) -c lib/parser.cpp -o bin/parser.o
 
-curves.o: curves.cpp graphics.h
-	$(CC) $(CFLAGS) -c curves.cpp
+bin/util.o: lib/util.cpp lib/graphics.h
+	$(CC) $(CFLAGS) -c lib/util.cpp -o bin/util.o
 
-parser.o: parser.cpp graphics.h
-	$(CC) $(CFLAGS) -c parser.cpp
+bin/3d.o: lib/3d.cpp lib/graphics.h
+	$(CC) $(CFLAGS) -c lib/3d.cpp -o bin/3d.o
 
-util.o: util.cpp graphics.h
-	$(CC) $(CFLAGS) -c util.cpp
-
-3d.o: 3d.cpp graphics.h
-	$(CC) $(CFLAGS) -c 3d.cpp
-
-transformation.o: transformation.cpp graphics.h
-	$(CC) $(CFLAGS) -c transformation.cpp
-
-run_shell: build
-	./shell.out
+bin/transformation.o: lib/transformation.cpp lib/graphics.h
+	$(CC) $(CFLAGS) -c lib/transformation.cpp -o bin/transformation.o
 
 run_script: script
 	./run_script.out script
 
 clean:
+	rm bin/*
 	rm *.out
-	rm *.o
+	rm *.png
+	rm *.ppm
