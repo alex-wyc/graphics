@@ -10,7 +10,7 @@ edge_set generate_edge_set(param_t func_x, param_t func_y,
     float y0 = func_y(t0);
     float x, y;
 
-    for (float t = t0 ; t < t1 + inc; t += inc) {
+    for (float t = t0 ; t < t1 ; t += inc) {
         x = func_x(t);
         y = func_y(t);
         ADD_TO_EDGE_SET(es, EDGE(PT(x0, y0, 0), PT(x, y, 0)));
