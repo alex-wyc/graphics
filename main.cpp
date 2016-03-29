@@ -1,14 +1,11 @@
 #include <cstdlib>
 #include <iostream>
 
-#include "graphics.h"
+#include "lib/graphics.h"
 
 int main(int argc, char *argv[]) {
-    Canvas *screen = new Canvas();
-    float A[4][4];
-    edge_set es;
     if (argc == 2) {
-        parse_file(argv[1], screen, A, &es);
+        parse_file(argv[1]);
     }
     return 0;
 }

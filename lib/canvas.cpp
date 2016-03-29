@@ -25,6 +25,10 @@ void Canvas::plot(color c, int x, int y) {
 	}
 }
 
+void Canvas::plot(color c, point p) {
+    plot(c, GET_X(p), GET_Y(p));
+}
+
 void Canvas::clear_screen() {
 	for (int x = 0 ; x < xres ; x++) {
 		for (int y = 0 ; y < yres ; y++) {
@@ -193,4 +197,11 @@ void Canvas::draw_edge_set(color c, edge_set es) {
 	for (int i = 0 ; i < sz ; i++) {
 		draw_edge(c, es.at(i));
 	}
+}
+
+void Canvas::draw_point_set(color c, point_set ps) {
+    size_t sz = ps.size();
+    for (int i = 0 ; i < sz ; i++) {
+        plot(c, ps.at(i));
+    }
 }

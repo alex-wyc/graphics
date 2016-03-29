@@ -34,6 +34,7 @@
 #define EDGE(pt1, pt2) std::make_pair(pt1, pt2)
 #define ADD_TO_EDGE_SET(es, edge) es.push_back(edge)
 #define CONCAT_EDGE_SETS(es1, es2) es1.insert(es1.end(), es2.begin(), es2.end())
+#define ADD_TO_POINT_SET(ps, x, y, z) ps.push_back(PT(x, y, z))
 
 typedef struct pixel {
     int r;
@@ -45,6 +46,7 @@ typedef std::pair<int, int> coor_2d;
 typedef std::tuple<float, float, float, float> point;
 typedef std::pair<point, point> edge;
 typedef std::vector<edge> edge_set;
+typedef std::vector<point> point_set;
 
 typedef std::function<float(float)> param_t;
 
@@ -59,6 +61,7 @@ class Canvas {
         void clear_screen();
 
         void plot(color c, int x, int y);
+        void plot(color c, point p);
 
         void draw_line(color c, int x0, int y0, int x1, int y1);
         void draw_line(color c, coor_2d init, coor_2d finish);
@@ -66,12 +69,17 @@ class Canvas {
         void draw_edge(color c, edge e);
         void draw_edge_set(color c, edge_set es);
 
+        void draw_point_set(color c, point_set ps);
+
         void display();
         void save_ppm(const char *file);
 };
 
+// general utilities, located in util.cpp
+edge_set to_edge_set(point_set ps);
+
 // parsing program data, located in parser.cpp
-void parse_file(char *filename, Canvas *screen, float A[4][4], edge_set *es);
+void parse_file(char *filename, int debug = 0);
 
 // linear algebra, located in transformation.cpp
 void gen_identity_matrix_4(float A[4][4]);
@@ -117,5 +125,10 @@ edge_set bezier_curve(float x0, float y0,
                       float x2, float y2,
                       float x3, float y3,
                       float inc = DEFAULT_INC);
+
+// 3d images located in 3d.cpp
+edge_set box(float x, float y, float z, float dx, float dy, float dz);
+point_set generate_sphere(float cx, float cy, float cz, float r, float inc = DEFAULT_INC);
+point_set generate_torus(float cx, float cy, float cz, float r1, float r2, float inc = DEFAULT_INC);
 
 #endif // GRAPHICS_H_
