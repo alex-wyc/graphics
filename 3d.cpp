@@ -59,9 +59,9 @@ point_set generate_sphere(float cx, float cy, float cz, float r, float inc) {
     point_set ps;
     for (float p = 0 ; p < 1 ; p += inc) {
         for (float t = 0 ; t < 1 ; t += inc) {
-            x = r * cos(t * PI);
-            y = r * sin(t * PI) * cos(p * 2 * PI);
-            z = r * sin(t * PI) * sin(p * 2 * PI);
+            x = r * cos(t * PI) + cx;
+            y = r * sin(t * PI) * cos(p * 2 * PI) + cy; 
+            z = r * sin(t * PI) * sin(p * 2 * PI) + cz;
             ADD_TO_POINT_SET(ps, x, y, z);
         }
     }
@@ -74,9 +74,9 @@ point_set generate_torus(float cx, float cy, float cz, float r1, float r2, float
     point_set ps;
     for (float p = 0 ; p < 1 ; p += inc) {
         for (float t = 0 ; t < 1 ; t += inc) {
-            x = r1 * cos(t * 2 * PI);
-            y = cos(p * 2 * PI) * (r1 * sin(t * 2 * PI) + r2);
-            z = sin(p * 2 * PI) * (r1 * sin(t * 2 * PI) + r2);
+            x = r1 * cos(t * 2 * PI) + cx;
+            y = cos(p * 2 * PI) * (r1 * sin(t * 2 * PI) + r2) + cy;
+            z = sin(p * 2 * PI) * (r1 * sin(t * 2 * PI) + r2) + cz;
             ADD_TO_POINT_SET(ps, x, y, z);
         }
     }
