@@ -70,7 +70,7 @@ point_set generate_sphere(float cx, float cy, float cz, float r, float inc) {
 }
 
 polygon_set get_sphere_mesh(point_set sphere, int n) {
-    n = n + 1;
+    n++;
     size_t sz = sphere.size();
     polygon_set ps;
     for (int j = 0 ; j < sz ; j = j + n) {
@@ -101,6 +101,20 @@ point_set generate_torus(float cx, float cy, float cz, float r1, float r2, float
     return ps;
 }
 
-polygon_set get_torus_mesh(point_set torus, int n) {
-    // TODO i'll do dis later
+polygon_set get_torus_mesh(point_set torus, int n) { // FIXME
+    n++;
+    size_t sz = torus.size();
+    polygon_set ps;
+    for (int j = 0 ; j < sz ; j = j + n) {
+        for (int i = 0 ; i < n - 1 ; i++) {
+            ADD_TO_POLYGON_SET(ps, POLYGON(torus[(j + i) % sz],
+                                           torus[(j + n + ((i + 1) % n)) % sz],
+                                           torus[(j + i + n) % sz]));
+            ADD_TO_POLYGON_SET(ps, POLYGON(torus[(j + i) % sz],
+                                           torus[(j + ((i + 1) % n)) % sz],
+                                           torus[(j + n + ((i + 1) % n)) % sz]));
+        }
+    }
+
+    return ps;
 }

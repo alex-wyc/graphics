@@ -145,11 +145,10 @@ void parse_file(char *file, int debug) {
                 }
                 else if (command[1] == 'o') { // torus TODO
                     fin >> args[0] >> args[1] >> args[2] >> args[3] >> args[4];
-                    point_set ps = generate_torus(args[0], args[1], args[2], args[3], args[4]);
-                    tmp = to_edge_set(ps);
-                    sz = tmp.size();
+                    tmp_p = get_torus_mesh(generate_torus(args[0], args[1], args[2], args[3], args[4]), 1.0 / DEFAULT_INC);
+                    sz = tmp_p.size();
                     for (int i = 0 ; i < sz ; i++) {
-                        es.push_back(tmp.at(i));
+                        ps.push_back(tmp_p.at(i));
                     }
                 }
                 break;
