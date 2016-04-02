@@ -22,7 +22,7 @@
 
 #define PI 3.14159265359
 
-#define DEFAULT_INC 0.25
+#define DEFAULT_INC 0.125
 
 // I <3 macro hacks
 #define GET_X(p) std::get<0>(p)

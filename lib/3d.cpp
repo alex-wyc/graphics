@@ -102,11 +102,10 @@ point_set generate_torus(float cx, float cy, float cz, float r1, float r2, float
 }
 
 polygon_set get_torus_mesh(point_set torus, int n) { // FIXME
-    n++;
     size_t sz = torus.size();
     polygon_set ps;
     for (int j = 0 ; j < sz ; j = j + n) {
-        for (int i = 0 ; i < n - 1 ; i++) {
+        for (int i = 0 ; i < n ; i++) {
             ADD_TO_POLYGON_SET(ps, POLYGON(torus[(j + i) % sz],
                                            torus[(j + n + ((i + 1) % n)) % sz],
                                            torus[(j + i + n) % sz]));
