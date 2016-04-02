@@ -45,9 +45,10 @@ typedef struct pixel {
 typedef std::pair<int, int> coor_2d;
 typedef std::tuple<float, float, float, float> point;
 typedef std::pair<point, point> edge;
-typedef std::vector<edge> edge_set;
+typedef std::tuple<point, point, point> polygon;
 typedef std::vector<point> point_set;
-typedef std::vector<polygon> 
+typedef std::vector<edge> edge_set;
+typedef std::vector<polygon> polygon_set;
 
 typedef std::function<float(float)> param_t;
 
@@ -69,6 +70,9 @@ class Canvas {
         void draw_line(color c, point i, point f);
         void draw_edge(color c, edge e);
         void draw_edge_set(color c, edge_set es);
+
+        void draw_polygon(color c, polygon p);
+        void draw_polygon_set(color c, polygon_set ps);
 
         void draw_point_set(color c, point_set ps);
 
@@ -134,5 +138,8 @@ point_set generate_sphere(float cx, float cy, float cz, float r, float inc = DEF
 polygon_set sphere(point_set sphere);
 point_set generate_torus(float cx, float cy, float cz, float r1, float r2, float inc = DEFAULT_INC);
 polygon_set torus(point_set torus);
+
+polygon_set get_sphere_mesh(point_set ps);
+polygon_set get_torus_mesh(point_set ps);
 
 #endif // GRAPHICS_H_
