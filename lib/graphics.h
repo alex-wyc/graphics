@@ -32,9 +32,11 @@
 
 #define PT(x, y, z) std::make_tuple(x, y, z, 1)
 #define EDGE(pt1, pt2) std::make_pair(pt1, pt2)
+#define POLYGON(pt1, pt2, pt3) std::make_tuple(pt1, pt2, pt3)
 #define ADD_TO_EDGE_SET(es, edge) es.push_back(edge)
 #define CONCAT_EDGE_SETS(es1, es2) es1.insert(es1.end(), es2.begin(), es2.end())
 #define ADD_TO_POINT_SET(ps, x, y, z) ps.push_back(PT(x, y, z))
+#define ADD_TO_POLYGON_SET(ps, polygon) ps.push_back(polygon)
 
 typedef struct pixel {
     int r;
