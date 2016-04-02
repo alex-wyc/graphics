@@ -98,6 +98,19 @@ edge_set transform_figure(edge_set es, float A[4][4]) {
     return to_return;
 }
 
+polygon_set transform_figure(polygon_set ps, float A[4][4]) {
+    size_t s = ps.size();
+    polygon_set to_return(s);
+
+    for (int i = 0 ; i < s ; i++) {
+        to_return[i] = POLYGON(transform(std::get<0>(ps.at(i)), A),
+                               transform(std::get<1>(ps.at(i)), A),
+                               transform(std::get<2>(ps.at(i)), A));
+    }
+
+    return to_return;
+}
+
 void generate_dilation_matrix(float A[4][4], float sx, float sy, float sz) {
     A[0][0] = sx; A[0][1] = 0; A[0][2] = 0; A[0][3] = 0;
     A[1][0] = 0; A[1][1] = sy; A[1][2] = 0; A[1][3] = 0;

@@ -34,6 +34,7 @@ void parse_file(char *file, int debug) {
     char command[256];
     float args[8] = {0};
     edge_set es, tmp;
+    polygon_set ps, tmp_p;
     float current[4][4], A[4][4];
     color c;
     c.r = c.g = c.b = 255;
@@ -72,6 +73,7 @@ void parse_file(char *file, int debug) {
                 }
                 else if (command[1] == 'l') { // clear
                     es.clear();
+                    ps.clear();
                 }
                 break;
 
@@ -101,10 +103,10 @@ void parse_file(char *file, int debug) {
                     for (int i = 0 ; i < 6 ; i++) {
                         fin >> args[i];
                     }
-                    tmp = box(args[0], args[1], args[2], args[3], args[4], args[5]);
-                    sz = tmp.size();
+                    tmp_p = get_box_mesh(generate_box(args[0], args[1], args[2], args[3], args[4], args[5]));
+                    sz = tmp_p.size();
                     for (int i = 0 ; i < sz ; i++) {
-                        es.push_back(tmp.at(i));
+                        ps.push_back(tmp_p.at(i));
                     }
                 }
                 break;
@@ -127,11 +129,10 @@ void parse_file(char *file, int debug) {
                 }
                 else if (command[1] == 'p') { // sphere
                     fin >> args[0] >> args[1] >> args[2] >> args[3];
-                    point_set ps = generate_sphere(args[0], args[1], args[2], args[3], DEFAULT_INC);
-                    tmp = to_edge_set(ps);
-                    sz = tmp.size();
+                    tmp_p = get_sphere_mesh(generate_sphere(args[0], args[1], args[2], args[3], DEFAULT_INC), 1.0 / DEFAULT_INC);
+                    sz = tmp_p.size();
                     for (int i = 0 ; i < sz ; i++) {
-                        es.push_back(tmp.at(i));
+                        ps.push_back(tmp_p.at(i));
                     }
                 }
                 break;
@@ -142,7 +143,7 @@ void parse_file(char *file, int debug) {
                     generate_translation_matrix(current, args[0], args[1], args[2]);
                     matrix_multiply_4(A, current, A);
                 }
-                else if (command[1] == 'o') {
+                else if (command[1] == 'o') { // torus TODO
                     fin >> args[0] >> args[1] >> args[2] >> args[3] >> args[4];
                     point_set ps = generate_torus(args[0], args[1], args[2], args[3], args[4]);
                     tmp = to_edge_set(ps);
@@ -173,11 +174,13 @@ void parse_file(char *file, int debug) {
 
             case 'a': // apply
                 es = transform_figure(es, A);
+                ps = transform_figure(ps, A);
                 break;
 
             case 'd': // display
                 screen.clear_screen();
                 screen.draw_edge_set(c, es);
+                screen.draw_polygon_set(c, ps);
                 screen.display();
                 break;
 

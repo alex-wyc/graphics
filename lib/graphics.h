@@ -22,7 +22,7 @@
 
 #define PI 3.14159265359
 
-#define DEFAULT_INC 0.01
+#define DEFAULT_INC 0.125
 
 // I <3 macro hacks
 #define GET_X(p) std::get<0>(p)
@@ -84,6 +84,7 @@ class Canvas {
 
 // general utilities, located in util.cpp
 edge_set to_edge_set(point_set ps);
+edge_set to_edge_set(polygon_set ps);
 
 // parsing program data, located in parser.cpp
 void parse_file(char *filename, int debug = 0);
@@ -103,6 +104,7 @@ void duplicate_matrix(float result[4][4], float src[4][4]);
 point transform(point v, float A[4][4]);
 edge transform(edge e, float A[4][4]);
 edge_set transform_figure(edge_set es, float A[4][4]);
+polygon_set transform_figure(polygon_set ps, float A[4][4]);
 
 void generate_dilation_matrix(float A[4][4], float sx, float sy, float sz);
 point dilate(point v, float sx, float sy, float sz);
@@ -134,14 +136,12 @@ edge_set bezier_curve(float x0, float y0,
                       float inc = DEFAULT_INC);
 
 // 3d images located in 3d.cpp
-point_set genera_box(float x, float y, float z, float dx, float dy, float dz);
-polygon_set box(point_set box);
+point_set generate_box(float x, float y, float z, float dx, float dy, float dz);
 point_set generate_sphere(float cx, float cy, float cz, float r, float inc = DEFAULT_INC);
-polygon_set sphere(point_set sphere);
 point_set generate_torus(float cx, float cy, float cz, float r1, float r2, float inc = DEFAULT_INC);
-polygon_set torus(point_set torus);
 
-polygon_set get_sphere_mesh(point_set ps);
-polygon_set get_torus_mesh(point_set ps);
+polygon_set get_box_mesh(point_set ps);
+polygon_set get_sphere_mesh(point_set ps, int n);
+polygon_set get_torus_mesh(point_set ps, int n);
 
 #endif // GRAPHICS_H_

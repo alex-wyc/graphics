@@ -209,7 +209,7 @@ void Canvas::draw_point_set(color c, point_set ps) {
 void Canvas::draw_polygon(color c, polygon p) {
     draw_line(c, std::get<0>(p), std::get<1>(p));
     draw_line(c, std::get<1>(p), std::get<2>(p));
-    draw_line(c, std::get<2>(p), std::get<1>(p));
+    draw_line(c, std::get<2>(p), std::get<0>(p));
 }
 
 void Canvas::draw_polygon_set(color c, polygon_set ps) {
