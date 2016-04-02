@@ -47,6 +47,7 @@ typedef std::tuple<float, float, float, float> point;
 typedef std::pair<point, point> edge;
 typedef std::vector<edge> edge_set;
 typedef std::vector<point> point_set;
+typedef std::vector<polygon> 
 
 typedef std::function<float(float)> param_t;
 
@@ -127,8 +128,11 @@ edge_set bezier_curve(float x0, float y0,
                       float inc = DEFAULT_INC);
 
 // 3d images located in 3d.cpp
-edge_set box(float x, float y, float z, float dx, float dy, float dz);
+point_set genera_box(float x, float y, float z, float dx, float dy, float dz);
+polygon_set box(point_set box);
 point_set generate_sphere(float cx, float cy, float cz, float r, float inc = DEFAULT_INC);
+polygon_set sphere(point_set sphere);
 point_set generate_torus(float cx, float cy, float cz, float r1, float r2, float inc = DEFAULT_INC);
+polygon_set torus(point_set torus);
 
 #endif // GRAPHICS_H_

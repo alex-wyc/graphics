@@ -1,7 +1,7 @@
 #include "graphics.h"
 
-edge_set box(float x, float y, float z, float dx, float dy, float dz) {
-    edge_set es;
+point_set genera_box(float x, float y, float z, float dx, float dy, float dz) {
+    point_set ps;
     //
     //      B          C
     //      /----------/
@@ -13,45 +13,30 @@ edge_set box(float x, float y, float z, float dx, float dy, float dz) {
     //   | /        | /
     //   |/         |/
     //  E|----------/H
-       
-    // BA
-    ADD_TO_EDGE_SET(es, EDGE(PT(x, y, z),
-                             PT(x, y, z + dz)));
-    // BC
-    ADD_TO_EDGE_SET(es, EDGE(PT(x, y, z),
-                             PT(x + dx, y, z)));
-    // BF
-    ADD_TO_EDGE_SET(es, EDGE(PT(x, y, z),
-                             PT(x, y + dy, z)));
-    // AD
-    ADD_TO_EDGE_SET(es, EDGE(PT(x, y, z + dz),
-                             PT(x + dx, y, z + dz)));
-    // CD
-    ADD_TO_EDGE_SET(es, EDGE(PT(x + dx, y, z),
-                             PT(x + dx, y, z + dz)));
-    // DH
-    ADD_TO_EDGE_SET(es, EDGE(PT(x + dx, y, z + dz),
-                             PT(x + dx, y + dy, z + dz)));
-    // FE
-    ADD_TO_EDGE_SET(es, EDGE(PT(x, y + dy, z),
-                             PT(x, y + dy, z + dz)));
-    // EH
-    ADD_TO_EDGE_SET(es, EDGE(PT(x, y + dy, z + dz),
-                             PT(x + dx, y + dy, z + dz)));
-    // FG
-    ADD_TO_EDGE_SET(es, EDGE(PT(x, y + dy, z),
-                             PT(x + dx, y + dy, z)));
-    // HG
-    ADD_TO_EDGE_SET(es, EDGE(PT(x + dx, y + dy, z + dz),
-                             PT(x + dx, y + dy, z)));
-    // AE
-    ADD_TO_EDGE_SET(es, EDGE(PT(x, y, z + dz),
-                             PT(x, y + dy, z + dz)));
-    // CG
-    ADD_TO_EDGE_SET(es, EDGE(PT(x + dx, y, z),
-                             PT(x + dx, y + dy, z)));
+    
+    // A
+    ADD_TO_POINT_SET(ps, x, y, z + dz);
+    // B
+    ADD_TO_POINT_SET(ps, x, y, z);
+    // C
+    ADD_TO_POINT_SET(ps, x + dx, y, z);
+    // D
+    ADD_TO_POINT_SET(ps, x + dx, y, z + dz);
+    // E
+    ADD_TO_POINT_SET(ps, x, y + dy, z + dz);
+    // F
+    ADD_TO_POINT_SET(ps, x, y + dy, z);
+    // G
+    ADD_TO_POINT_SET(ps, x + dx, y + dy, z);
+    // H
+    ADD_TO_POINT_SET(ps, x + dx, y + dy, z + dz);
 
-    return es;
+    return ps;
+}
+
+polygon_set box(point_set box) {
+    polygon_set ps;
+    
 }
 
 point_set generate_sphere(float cx, float cy, float cz, float r, float inc) {
