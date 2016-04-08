@@ -1,0 +1,519 @@
+notes
+
+Image File Formats:
+
+Compressed v. Uncompressed
+
+    - Uncompressed Image: a map of pixels, pretty much
+        -> bmp, tif, svg
+    - Compressed Image: does something to the raw data to make it smaller
+        -> USUALLY involves a loss of information/quality
+        -> png, gif, jpeg
+
+Lossy v. Lossless
+
+    - Lossy: loses information during compression
+        -> jpeg
+    - Lossless: contains all of the original information
+        -> bmp, tif, png
+
+Raster v. Vector
+
+    - Raster: a grid of pixels
+        -> everything except for svg, pretty much
+    - Vector: list of drawing instructions
+        -> scales REALLY WELL (up or down)
+        -> SVG
+
+netpbm --> raster, loseless and uncompressed
+it is simple :) plaintext actually makes sense
+
+2016/02/03
+netbpm file:
+
+P3
+<XRES> <YRES>
+<MAX_COLOR_VALUE>
+
+---- END HEADER ----
+
+R B G R B G R B G ... 
+
+All white spaces are equivalent
+
+2016/02/05
+
+Bresenharn's Line Algorithm
+
+Problem with line is that we only have integral pixel values. We do not care
+for floating point calculations.
+
+In truth we don't care about the line, we care more about which pixels make up
+the approximation of the line.
+
+We need to establish a test of 'is something on the line?'
+
+We definitely know the start and end points of the line, we are going to start
+with slope-intercept form
+
+y = mx + b
+y = (dy / dx) x + b <-- division is the pathway to evil!
+y dx = x dy + b dx
+0 = x dy - y dx + b dx
+
+Let A = dy, B = -dx, C = b dx
+
+0 = Ax + By + C <-- STANDARD FORM OF THE EQUATION!!!
+
+Let this be a function f(x, y) = Ax + By + C
+
+We currently operate in octant 1
+
+if f(x, y) = 0, then (x, y) is on the line
+
+if f(x, y) < 0, then (x, y) is above the line
+
+if f(x, y) > 0, then (x, y) is below the line
+
+Start at the starting pixel, compare f(x+1, y+1) and f(x+1, y). Pick the one with
+the lower magnitude.
+
+However, we can simply check the midpoint, f(x+1, y+1/2)
+
+switch (f(x + 1, y + 1/2)) {
+    case 0:
+        pick one of them, any one
+
+    case >0: // midpt is ABOVE the line
+        x + 1, y
+
+    case <0: // midpt is BELOW the line
+        x + 1, y + 1
+}
+
+First draft algorithm:
+
+inputs: (x_0, y_0), (x_1, y_1)
+
+x = x_0, y = y_0
+
+while (x <= x_1) {
+    plot(x, y);
+
+    d = f(x + 1, y + 1/2); // <-- gateway to inefficiency
+
+    if (d > 0) {
+        y++;
+    }
+    x++;
+}
+
+optimize d calculation
+-----------------------
+
+first run: f(x_0 + 1, y_0 + 1/2)
+
+d = A(x_0 + 1) + B(y_0 + 1/2) + C
+  = Ax_0 + A + By_0 + B/2 + C
+
+SO MANY CONSTANTS!!!! SBUSTITUTION TIME lol
+
+d = f(x_0, y_0) = 0 + A + 1/2 B
+
+for any other f's, simply increment :)
+
+x = x_0, y = y_0, d = 2A + b;
+
+while (x <= x_1) {
+    plot(x, y);
+
+    if (d > 0) {
+        y++;
+        d += 2B;
+    }
+
+    x++;
+    d += 2A;
+}
+
+Expanding to other octants:
+
+Octant II -- slope > 1
+next cadidates:
+(x, y + 1)
+(x+1, y+1)
+midpt: (x + 1/2, y + 1)
+
+changes: while condition, y < y1 instead of x < x1
+
+if d > 0, x,y is to the left
+else x,y is to the right
+
+if d is NEGATIVE, x += 1, d += 2A
+
+always increment y += 1 and increment d by 2B
+
+2016/02/22
+
+We can imagine a picture as a point matrix, imagine a triangle with pts (p0, p1,
+p2) and a rectangle (p3, p4, p5, p6) We can store this in a point matrix
+
+[p0, p1, p2, p3, p4, p5, p6]
+
+while(i < points.length - 1) {
+    draw_line(points[i], points[i + 1]);
+    i++;
+}
+
+Solutions:
+   -> connection matrix
+   -> edge matrix
+
+We are going to use the edge matrix. The advantage of using edge matrix is that
+in 3D we will use a grouping of triangles.
+
+we shall be using an edge matrix
+
+Scaling!
+(x, y, z) -- S(a, b, c) --> (ax, by, cz)
+
+a 0 0 0    x     ax
+0 b 0 0    y  =  by
+0 0 c 0    z     cz
+0 0 0 1    1     1
+
+
+Translating!
+(x, y, z) -- T(a, b, c) --> (x + a, y + b, z + c)
+
+1 0 0 a    x     x + a
+0 1 0 b    y  =  y + b
+0 0 1 c    z     z + c
+0 0 0 1    1       1
+
+Rotating!
+(x, y, z) -- R(axis, theta) -->
+
+Hermite Curves
+Consider a cubic parametric function
+F(t) = at^3 + bt^2 + ct + d: points on the curve
+
+dF/dt = 3at^2 + 2bt + c: rates of change
+
+F(0) = d : pt when t = 0 --> P_0
+dF/dt(0) = c : rate o change at t = 0 --> R_0
+
+F(1) = a + b + c + d : pt when t = 1 --> P_1
+dF/dt(1) = 3a + 3b + c : rate o change at t = 1 --> R_1
+
+we know P_0, P_1, R_0, R_1 --> 4 linear eq 4 vars --> FKING MATRICES
+
+coefficient matrix:
+
+scalarM * v   =   P
+-----------------
+0 0 0 1   a   =   p_0
+0 0 1 0   b   =   r_0
+1 1 1 1   c   =   p_1
+3 3 1 0   d   =   r_1
+
+M * v = P
+v = M^-1P
+
+M^-1
+ 2 -2  1  1
+-3  3 -2 -1
+ 0  0  1  0
+ 1  0  0  0
+
+Bezier Curve
+
+Inputs P0 P3 --> endpts
+
+P1 P2 --> influences the curves
+
+Linear Bezier Curve
+
+P0 --------- P1
+
+Quadratic
+
+      P1
+      _
+     / \
+    /   \
+P0 |     | P2
+
+Linear Bezier
+P(t) = (1 - t)P_0 + tP_1
+
+Quadratic
+R(t) = (1 - t)R_0 + t R_1
+
+R_0 (t) = (1 - t)P_0 + t P_1
+R_1 (t) = (1 - t)P_1 + t P_2
+
+R(t) = (1-t)^2 P_0 + 2t(1-t) P_1 + t^2 P_2
+
+Cubic
+Q(t) = (1-t)^3 P_0 + 3t(1-t)^2 P_1 + 3t^2(1-t) P_2 + t^3 P_3
+
+BOX!!!!!!!!
+It's literally 12 points......
+     B          C
+     /----------/
+    /|         /|
+  A/ |      D / |         /-- +x
+  /----------/  |        /|
+  |  |F      |  |G     +z |
+  |  /-------|--/        +y
+  | /        | /
+  |/         |/
+ E|----------/H
+
+If B = (x0, y0, z0)
+Then:
+    A = (x0, y0, z0 + s)
+    C = (x0 + s, y0, z0)
+    D = (x0 + s, y0, z0 + s)
+    E = (x0, y0 + s, z0 + s)
+    F = (x0, y0 + s, z0)
+    G = (x0 + s, y0 + s, z0)
+    H = (x0 + s, y0 + s, z0 + s)
+
+SPHERES!
+
+spheres are spinny circles
+
+x = r cos t
+y = r sin t
+z = 0
+
+Rotate bit by bit using aforementioned matrices
+
+Example x-rot matrix
+
+1 0     0      0
+0 cos x -sin x 0
+0 sin x cos x  0
+0 0     0      1
+
+note tat x is the angle by which we rotate, this is different from t our time
+parameter
+
+x = r cos t
+y = r sin t cos x
+z = r sin t sin x
+
+fake code
+
+for (t = 0 ; t < 180 ; t += inc) {
+    for (a = 0 ; a < 360 ; a += inc) {
+        curr.x = r cos t
+        curr.y = r sin t cos a
+        curr.z = r sin t sin a
+        ADD_TO_EDGE_SET(es, EDGE(prev, curr));
+        prev = curr;
+    }
+}
+
+simplified fake code
+
+for (p = 0 ; p < 1 ; p += inc) { // each rotation
+    for (t = 0 ; t < 1 ; t += inc) { // one semicircle
+        curr.x = r cos (pi * t)
+        curr.y = r sin (pi * t) cos (2 * pi * t)
+        curr.z = r sin (pi * t) sin (2 * pi * t)
+        ADD_TO_EDGE_SET(es, EDGE(prev, curr));
+        prev = curr;
+    }
+}
+
+Torus
+
+x = r cos t
+y = cos a (r sin t + R)
+z = sin a (r sin t + R)
+
+Note that here a and t both have to go 0-2pi
+
+To offset them, just add to the end, i.e. make then translate!
+
+workload distribution
+
+it is worthwhile to write a generate_sphere function that would simply generate
+an array of points within a sphere/torus, for that then we can either creat a
+wireframe or surfaces....
+
+
+
+Connecting da dots
+
+Wireframe v. Polygon Mesh
+
+Wireframe Mesh
+===============
+
+A 3D object is defined by the edges that connect the vertices/points
+
+This works very well with our drawing framework, as our framework is defined by
+edges
+
+Sometimes a wireframe mesh is perfectly fine
+
+Polygon Mesh
+=============
+
+In a polygon mesh, a 3D object is defined by the surfaces that cover the object
+    Typically triangles or quadralaterals
+
+In order to create a polygon mesh, we CANNOT use an edge matrix... we'll be
+instead using a POLYGON/TRIANGLE matrix.
+
+Advantages of using polygon:
+    - Coloring things in
+        > Allows us to draw solid objects
+    - Distinguishing the front and the back
+        > This saves a lot of computation. Ex: you now only need to draw half of
+          a sphere :)
+
+
+Polygon Matrix
+---------------
+
+P0         P3
+|----------|
+|\      B  | 
+|   \      | 
+|      \   | 
+| A       \| 
+|----------|
+P1         P2
+
+           A              B
+PM = [(P0, P1, P2), (P2, P3, P0)]
+
+Draw 3 lines per polygon
+----  ----  ----
+P0P1, P1P2, P2P0
+
+typedef std::pair<point, point> edge;
+typedef std::tuple<point, point, point> polygon;
+
+EDGE MATRIC | POLYGON MATRIX
+-----------------------------
+plot        | plot
+draw_line   | draw_line
+draw_lines  | draw_polygons   <<<
+add_point   | add_point
+add_edge    | add_polygon     <<< ADD PTS IN COUNTERCLOCKWISE ORDER
+
+
+
+Polygon Meshes
+BOX!!!!!!!!
+It's literally 12 points......
+     B          C
+     /----------/
+    /|         /|
+  A/ |     /D / |         /-- +x
+  /----------/  |        /|
+  |\F|/      |  |G     +z |
+  |  /\------|--/        +y
+  | /    \   | /
+  |/        \|/
+ E|----------/H
+
+If B = (x0, y0, z0)
+Then:
+    A = (x0, y0, z0 + s)
+    C = (x0 + s, y0, z0)
+    D = (x0 + s, y0, z0 + s)
+    E = (x0, y0 + s, z0 + s)
+    F = (x0, y0 + s, z0)
+    G = (x0 + s, y0 + s, z0)
+    H = (x0 + s, y0 + s, z0 + s)
+
+FRONT
+AEH
+AHD
+
+BACK
+CFB
+CGF
+
+SPHERE!!!!!!!!
+HEACHELAND
+
+           0
+         17. 1       
+      16. ' ' .2      
+    15.         .3    
+   14.           .4   
+   13.           .5   
+    12.         .6    
+      11.     .7      
+        10'.'8       
+           9          
+We should connect the dots
+
+P0 - P1 - P2 - ... - P17 --> one longitude
+
+P18 - P19 - ... - P35 --> another longitude
+
+To make the triangles appear we need the following:
+
+P0  - P1  - P2  - ... - P17 --> one longitude
+       |  \  |  \  |  \  |
+P18 - P19 - P20 - ... - P35 --> another longitude
+
+P1-P20-P19 and P1-P2-P20
+
+i - i + n + 1 - i + n
+i - i + 1 - i + n + i
+
+
+BACKFACE CULLING
+
+not render any backfacing surfaces
+
+the surface normal (\vec{N}) \perp to a plane
+
+we have to compare the surface normal to the perspective of the image
+
+we compare \vec{N} to the view vector/camera \vec{v}, and the dot product of
+those two vectors will tell us if we're looking at a front face or a backface.
+
+            \       / \vec{N}
+             \     /        
+              \   /         
+ /             \ /          
+------------------------ \vec{v}
+ \               \
+                  \ surface
+
+
+theta is between vec{v} and \vec{N}, 90 < theta < 270 <--- bound test
+
+
+ALGO:
+1. calculate \vec{N}
+2. find theta: \vec{N} dot \vec{V} / norm
+3. if theta \in [90, 270], draw, else, move on
+
+
+surface norm: cross product of two vectors that share and end point and go in
+different directions
+
+P1P2 x P2P3
+
+A x B = <A_y B_z - A_z B_y, A_z B_x - A_x B_z, A_x B_y - A_y B_x>
+
+view vector:
+<0, 0, -1>
+
+N dot V = |N| |V| cos theta
+
+cos a < 0 then 90 < a < 270
+
+draw if dot product is negative
