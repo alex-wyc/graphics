@@ -29,14 +29,6 @@ void print_matrix_4(float A[4][4]) {
     }
 }
 
-float dot_product(float v1[4], float v2[4]) {
-    float product = 0;
-    for (int i = 0 ; i < 4 ; i++) {
-        product += v1[i] * v2[i];
-    }
-    return product;
-}
-
 void transpose_4(float A[4][4]) {
     for (int i = 0 ; i < 4 ; i++) {
         for (int j = i + 1 ; j < 4 ; j++) {

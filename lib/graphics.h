@@ -82,6 +82,8 @@ class Canvas {
         void save_ppm(const char *file);
 };
 
+float *to_array(point p);
+
 // general utilities, located in util.cpp
 edge_set to_edge_set(point_set ps);
 edge_set to_edge_set(polygon_set ps);
@@ -95,6 +97,7 @@ void gen_identity_matrix_4(float A[4][4]);
 void print_matrix_4(float A[4][4]);
 
 float dot_product(float v1[4], float v2[4]);
+void cross_product(float res[4], float v1[4], float v2[4], float v3[4]);
 void transpose_4(float A[4][4]);
 void matrix_multiply_4(float result[4][4], float first[4][4], float second[4][4]);
 void matrix_multiply_scalar(float result[4][4], float matrix[4][4], float scalar);
