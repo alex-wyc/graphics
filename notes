@@ -473,3 +473,47 @@ i - i + n + 1 - i + n
 i - i + 1 - i + n + i
 
 
+BACKFACE CULLING
+
+not render any backfacing surfaces
+
+the surface normal (\vec{N}) \perp to a plane
+
+we have to compare the surface normal to the perspective of the image
+
+we compare \vec{N} to the view vector/camera \vec{v}, and the dot product of
+those two vectors will tell us if we're looking at a front face or a backface.
+
+            \       / \vec{N}
+             \     /        
+              \   /         
+ /             \ /          
+------------------------ \vec{v}
+ \               \
+                  \ surface
+
+
+theta is between vec{v} and \vec{N}, 90 < theta < 270 <--- bound test
+
+
+ALGO:
+1. calculate \vec{N}
+2. find theta: \vec{N} dot \vec{V} / norm
+3. if theta \in [90, 270], draw, else, move on
+
+
+surface norm: cross product of two vectors that share and end point and go in
+different directions
+
+P1P2 x P2P3
+
+A x B = <A_y B_z - A_z B_y, A_z B_x - A_x B_z, A_x B_y - A_y B_x>
+
+view vector:
+<0, 0, -1>
+
+N dot V = |N| |V| cos theta
+
+cos a < 0 then 90 < a < 270
+
+draw if dot product is negative
