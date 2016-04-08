@@ -1,5 +1,5 @@
 set color 0 255 0
-set inc 0.01
+set inc 0.125
 torus 0 0 0 40 200
 ident
 yrotate 90

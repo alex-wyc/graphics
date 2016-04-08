@@ -57,7 +57,7 @@ polygon_set get_box_mesh(point_set box) {
 point_set generate_sphere(float cx, float cy, float cz, float r, float inc) {
     float x, y, z;
     point_set ps;
-    for (float p = 0 ; p < 1 ; p += inc) {
+    for (float p = 0 ; p < 1 + inc ; p += inc) {
         for (float t = 0 ; t < 1 + inc; t += inc) {
             x = r * cos(t * PI) + cx;
             y = r * sin(t * PI) * cos(p * 2 * PI) + cy; 
@@ -89,8 +89,8 @@ polygon_set get_sphere_mesh(point_set sphere, int n) {
 point_set generate_torus(float cx, float cy, float cz, float r1, float r2, float inc) {
     float x, y, z;
     point_set ps;
-    for (float p = 0 ; p < 1 ; p += inc) {
-        for (float t = 0 ; t < 1 ; t += inc) {
+    for (float p = 0 ; p < 1 + inc ; p += inc) {
+        for (float t = 0 ; t < 1 + inc ; t += inc) {
             x = r1 * cos(t * 2 * PI) + cx;
             y = cos(p * 2 * PI) * (r1 * sin(t * 2 * PI) + r2) + cy;
             z = sin(p * 2 * PI) * (r1 * sin(t * 2 * PI) + r2) + cz;
