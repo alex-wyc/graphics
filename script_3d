@@ -1,6 +1,6 @@
 #test box mesh
 set color 0 255 0
-set increment 0.125
+set increment 0.05
 box
 0 0 0 200 100 400
 ident
