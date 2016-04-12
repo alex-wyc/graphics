@@ -103,10 +103,11 @@ point_set generate_torus(float cx, float cy, float cz, float r1, float r2, float
 }
 
 polygon_set get_torus_mesh(point_set torus, int n) { // FIXME
+    n++;
     size_t sz = torus.size();
-    n += sz % n;
-    std::cout << sz % n << '\n';
-    getchar();
+    //n += sz % n;
+    //std::cout << sz % n << '\n';
+    //getchar();
     polygon_set ps;
     for (int j = 0 ; j < sz ; j = j + n) {
         for (int i = 0 ; i < n ; i++) {
