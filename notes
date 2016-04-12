@@ -517,3 +517,25 @@ N dot V = |N| |V| cos theta
 cos a < 0 then 90 < a < 270
 
 draw if dot product is negative
+
+RELATIVE COORDINATE SYSTEM
+> Currently all of our objects are drawn with respect to the same
+  origin/coordinate system
+
+all of our current 'transformations' are operating on a coordinate system
+
+the old way is a global coordinate system
+
+> In a relative coordinate system each object could have its own
+  origin/coordinate system
+
+> We shall use a stack to store the coordinate systems
+
+Drawing Framework:
+1. Transformations are applied to the current top of the stack
+2. The stack can be pushed and popped as needed
+3. Drawing:
+    1). generate the points/polygons and add them to a matrix
+    2). multiply the points by the current stack top
+    3). Draw the points to the screen
+    4). Clear the point matrix
