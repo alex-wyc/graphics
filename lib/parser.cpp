@@ -126,6 +126,7 @@ void parse_file(char *file, int debug) {
                     fin >> command; // filename
                     screen.clear_screen();
                     screen.draw_edge_set(c, es);
+                    screen.draw_polygon_set(c, ps);
                     screen.save_ppm(command);
                 }
                 else if (command[1] == 'p') { // sphere
