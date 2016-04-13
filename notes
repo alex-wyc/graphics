@@ -539,3 +539,51 @@ Drawing Framework:
     2). multiply the points by the current stack top
     3). Draw the points to the screen
     4). Clear the point matrix
+
+
+        Command     |     Stack     |      Image
+---------------------------------------------------------
+push                   Ident Matrix
+                       Ident Matrix      origin at 0, 0
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+translate x,y,z        T(x, y, z) I      moved origin to x, y, z
+                       Ident Matrix
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+box x, y, z, w, h, d   T0 I              draw the box
+                       I
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+we now must consider the following:
+there are three scenarios:
+- totally independent
+    - pop
+- totally dependent
+    - do nothing
+- some dependence
+    - push a new relative coor system on the stack
+
+In our case we choose case trois
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+push T1              T1 T0 I             new coor system
+                     T0 I
+                     I
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+sphere xyzr          T1 T0 I             sphere drawn
+                     T0 I
+                     I
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+For object dependency, edit T0
+For just the object, edit T1
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Now for an object that is independent of the prev object, let us POP
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+pop                  T0 I
+                     I
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Now we ask if the arm is dependent on this part of the body, ofc it is, and it
+can move independently, so we push
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+push                 T2 T0 I             new relative coor system
+                     T0 I
+                     I
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+then same thing for the arm whatever
