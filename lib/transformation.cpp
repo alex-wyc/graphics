@@ -29,14 +29,6 @@ void print_matrix_4(float A[4][4]) {
     }
 }
 
-float dot_product(float v1[4], float v2[4]) {
-    float product = 0;
-    for (int i = 0 ; i < 4 ; i++) {
-        product += v1[i] * v2[i];
-    }
-    return product;
-}
-
 void transpose_4(float A[4][4]) {
     for (int i = 0 ; i < 4 ; i++) {
         for (int j = i + 1 ; j < 4 ; j++) {
@@ -95,6 +87,19 @@ edge_set transform_figure(edge_set es, float A[4][4]) {
     for (int i = 0 ; i < s ; i++) {
         to_return[i] = EDGE(transform(es.at(i).first, A), transform(es.at(i).second, A));
     }
+    return to_return;
+}
+
+polygon_set transform_figure(polygon_set ps, float A[4][4]) {
+    size_t s = ps.size();
+    polygon_set to_return(s);
+
+    for (int i = 0 ; i < s ; i++) {
+        to_return[i] = POLYGON(transform(std::get<0>(ps.at(i)), A),
+                               transform(std::get<1>(ps.at(i)), A),
+                               transform(std::get<2>(ps.at(i)), A));
+    }
+
     return to_return;
 }
 

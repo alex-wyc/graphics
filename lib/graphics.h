@@ -22,7 +22,7 @@
 
 #define PI 3.14159265359
 
-#define DEFAULT_INC 0.01
+#define DEFAULT_INC 0.125
 
 // I <3 macro hacks
 #define GET_X(p) std::get<0>(p)
@@ -32,9 +32,11 @@
 
 #define PT(x, y, z) std::make_tuple(x, y, z, 1)
 #define EDGE(pt1, pt2) std::make_pair(pt1, pt2)
+#define POLYGON(pt1, pt2, pt3) std::make_tuple(pt1, pt2, pt3)
 #define ADD_TO_EDGE_SET(es, edge) es.push_back(edge)
 #define CONCAT_EDGE_SETS(es1, es2) es1.insert(es1.end(), es2.begin(), es2.end())
 #define ADD_TO_POINT_SET(ps, x, y, z) ps.push_back(PT(x, y, z))
+#define ADD_TO_POLYGON_SET(ps, polygon) ps.push_back(polygon)
 
 typedef struct pixel {
     int r;
@@ -45,8 +47,10 @@ typedef struct pixel {
 typedef std::pair<int, int> coor_2d;
 typedef std::tuple<float, float, float, float> point;
 typedef std::pair<point, point> edge;
-typedef std::vector<edge> edge_set;
+typedef std::tuple<point, point, point> polygon;
 typedef std::vector<point> point_set;
+typedef std::vector<edge> edge_set;
+typedef std::vector<polygon> polygon_set;
 
 typedef std::function<float(float)> param_t;
 
@@ -69,14 +73,20 @@ class Canvas {
         void draw_edge(color c, edge e);
         void draw_edge_set(color c, edge_set es);
 
+        void draw_polygon(color c, polygon p);
+        void draw_polygon_set(color c, polygon_set ps);
+
         void draw_point_set(color c, point_set ps);
 
         void display();
         void save_ppm(const char *file);
 };
 
+float *to_array(point p);
+
 // general utilities, located in util.cpp
 edge_set to_edge_set(point_set ps);
+edge_set to_edge_set(polygon_set ps);
 
 // parsing program data, located in parser.cpp
 void parse_file(char *filename, int debug = 0);
@@ -87,6 +97,7 @@ void gen_identity_matrix_4(float A[4][4]);
 void print_matrix_4(float A[4][4]);
 
 float dot_product(float v1[4], float v2[4]);
+void cross_product(float res[4], float v1[4], float v2[4], float v3[4]);
 void transpose_4(float A[4][4]);
 void matrix_multiply_4(float result[4][4], float first[4][4], float second[4][4]);
 void matrix_multiply_scalar(float result[4][4], float matrix[4][4], float scalar);
@@ -96,6 +107,7 @@ void duplicate_matrix(float result[4][4], float src[4][4]);
 point transform(point v, float A[4][4]);
 edge transform(edge e, float A[4][4]);
 edge_set transform_figure(edge_set es, float A[4][4]);
+polygon_set transform_figure(polygon_set ps, float A[4][4]);
 
 void generate_dilation_matrix(float A[4][4], float sx, float sy, float sz);
 point dilate(point v, float sx, float sy, float sz);
@@ -127,8 +139,12 @@ edge_set bezier_curve(float x0, float y0,
                       float inc = DEFAULT_INC);
 
 // 3d images located in 3d.cpp
-edge_set box(float x, float y, float z, float dx, float dy, float dz);
+point_set generate_box(float x, float y, float z, float dx, float dy, float dz);
 point_set generate_sphere(float cx, float cy, float cz, float r, float inc = DEFAULT_INC);
 point_set generate_torus(float cx, float cy, float cz, float r1, float r2, float inc = DEFAULT_INC);
+
+polygon_set get_box_mesh(point_set ps);
+polygon_set get_sphere_mesh(point_set ps, int n);
+polygon_set get_torus_mesh(point_set ps, int n);
 
 #endif // GRAPHICS_H_
