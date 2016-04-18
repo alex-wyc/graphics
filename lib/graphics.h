@@ -97,6 +97,7 @@ class Coor_system {
         void rotate(int axis, float angle);
         edge_set transform(edge_set es);
         polygon_set transform(polygon_set ps);
+        void print();
 };
 
 float *to_array(point p);

@@ -7,6 +7,13 @@ Coor_system::Coor_system() {
     master[3][0] = 0; master[3][1] = 0; master[3][2] = 0; master[3][3] = 1;
 }
 
+void Coor_system::print() {
+    std::cout << master[0][0] << ' ' << master[0][1] << ' ' << master[0][2] << ' ' << master[0][3] << '\n';
+    std::cout << master[1][0] << ' ' << master[1][1] << ' ' << master[1][2] << ' ' << master[1][3] << '\n';
+    std::cout << master[2][0] << ' ' << master[2][1] << ' ' << master[2][2] << ' ' << master[2][3] << '\n';
+    std::cout << master[3][0] << ' ' << master[3][1] << ' ' << master[3][2] << ' ' << master[3][3] << '\n';
+}
+
 void Coor_system::set_master(float A[4][4]) {
     for (int i = 0 ; i < 4 ; i++) {
         for (int j = 0 ; j < 4 ; j++) {

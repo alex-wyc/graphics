@@ -35,7 +35,6 @@ void parse_file(char *file, int debug) {
     float args[8] = {0};
     edge_set es, tmp;
     polygon_set ps, tmp_p;
-    float current[4][4], A[4][4];
     color c;
     c.r = c.g = c.b = 255;
     size_t sz;
@@ -62,9 +61,10 @@ void parse_file(char *file, int debug) {
             // {{{
             case 'p': // push or pop
                 if (command[1] == 'u') { // push
-                    origins.push(origins.top().duplicate());
+                    Coor_system dup_cs = origins.top().duplicate();
+                    origins.push(dup_cs);
                 }
-                else if (command[1] == 'p') { // pop
+                else if (command[1] == 'o') { // pop
                     origins.pop();
                 }
                 break;
@@ -154,8 +154,7 @@ void parse_file(char *file, int debug) {
             case 's': // scale or save or sphere or set
                 if (command[1] == 'c') { // scale
                     fin >> args[0] >> args[1] >> args[2];
-                    generate_dilation_matrix(current, args[0], args[1], args[2]);
-                    matrix_multiply_4(A, current, A);
+                    origins.top().dilate(args[0], args[1], args[2]);
                 }
                 else if (command[1] == 'a') { // save
                     fin >> command; // filename

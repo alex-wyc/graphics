@@ -1,18 +1,17 @@
-torus 0 0 0 40 200
-ident
-yrotate 90
-apply
-torus 0 0 0 40 200
-ident
-xrotate 90
-apply
-box -100 -100 -100 200 200 200
-sphere 0 0 0 50
-ident
-xrotate 20
-yrotate 20
+# torso of the robot
+push
 translate 250 250 0
-apply
+#yrotate 30
+box -50 -100 -30 100 200 60
+#head
+push
+#yrotate 30
+translate 0 -130 0
+sphere 0 0 0 30
+pop
+#arm
+push
+translate 50 -100 0
+box 0 0 -30 30 130 60
 display
-save submit.ppm
 quit
