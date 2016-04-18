@@ -49,16 +49,18 @@ void parse_file(char *file, int debug) {
     std::ifstream fin(file);
 
     while (!fin.eof()) {
+        //getchar();
         fin >> command;
         if (debug) {
             std::cout << ":" << command << ":\n";
+            //std::cout << origins.size() << '\n';
         }
         switch (command[0]) {
             case '#': // comment -- do nothing, scan next
                 fin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                 break;
             
-            // {{{
+            // {{{ push and pop
             case 'p': // push or pop
                 if (command[1] == 'u') { // push
                     Coor_system dup_cs = origins.top().duplicate();

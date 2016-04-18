@@ -31,19 +31,19 @@ Coor_system Coor_system::duplicate() {
 void Coor_system::translate(float dx, float dy, float dz) {
     float A[4][4];
     generate_translation_matrix(A, dx, dy, dz);
-    matrix_multiply_4(master, A, master);
+    matrix_multiply_4(master, master, A);
 }
 
 void Coor_system::dilate(float dx, float dy, float dz) {
     float A[4][4];
     generate_dilation_matrix(A, dx, dy, dz);
-    matrix_multiply_4(master, A, master);
+    matrix_multiply_4(master, master, A);
 }
 
 void Coor_system::rotate(int axis, float angle) {
     float A[4][4];
     generate_rotation_matrix(A, axis, angle);
-    matrix_multiply_4(master, A, master);
+    matrix_multiply_4(master, master, A);
 }
 
 edge_set Coor_system::transform(edge_set es) {
