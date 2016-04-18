@@ -1,4 +1,4 @@
-OBJECTS=bin/canvas.o bin/transformation.o bin/curves.o bin/parser.o bin/util.o bin/3d.o bin/coor_system.cpp
+OBJECTS=bin/canvas.o bin/transformation.o bin/curves.o bin/parser.o bin/util.o bin/3d.o bin/coor_system.o
 CFLAGS= -std=c++11 -O2
 CC=g++
 
