@@ -1,9 +1,12 @@
-OBJECTS=bin/canvas.o bin/transformation.o bin/curves.o bin/parser.o bin/util.o bin/3d.o
+OBJECTS=bin/canvas.o bin/transformation.o bin/curves.o bin/parser.o bin/util.o bin/3d.o bin/coor_system.cpp
 CFLAGS= -std=c++11 -O2
 CC=g++
 
 script: $(OBJECTS)
 	$(CC) $(CFLAGS) -o run_script.out main.cpp $(OBJECTS)
+
+bin/coor_system.o: lib/coor_system.cpp lib/graphics.h
+	$(CC) $(CFLAGS) -c lib/coor_system.cpp -o bin/coor_system.o
 
 bin/canvas.o: lib/canvas.cpp lib/graphics.h
 	$(CC) $(CFLAGS) -c lib/canvas.cpp -o bin/canvas.o
