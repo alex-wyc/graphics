@@ -163,7 +163,7 @@ point_set generate_sphere(float cx, float cy, float cz, float r, float inc = DEF
 point_set generate_torus(float cx, float cy, float cz, float r1, float r2, float inc = DEFAULT_INC);
 
 polygon_set get_box_mesh(point_set ps);
-polygon_set get_sphere_mesh(point_set ps, int n);
-polygon_set get_torus_mesh(point_set ps, int n);
+polygon_set get_sphere_mesh(point_set ps);
+polygon_set get_torus_mesh(point_set ps);
 
 #endif // GRAPHICS_H_

@@ -164,7 +164,7 @@ void parse_file(char *file, int debug) {
                 }
                 else if (command[1] == 'p') { // sphere
                     fin >> args[0] >> args[1] >> args[2] >> args[3];
-                    tmp_p = get_sphere_mesh(generate_sphere(args[0], args[1], args[2], args[3], inc), 1.0 / inc);
+                    tmp_p = get_sphere_mesh(generate_sphere(args[0], args[1], args[2], args[3], inc));
                     sz = tmp_p.size();
                     for (int i = 0 ; i < sz ; i++) {
                         ps.push_back(tmp_p.at(i));
@@ -196,7 +196,7 @@ void parse_file(char *file, int debug) {
                 }
                 else if (command[1] == 'o') { // torus TODO
                     fin >> args[0] >> args[1] >> args[2] >> args[3] >> args[4];
-                    tmp_p = get_torus_mesh(generate_torus(args[0], args[1], args[2], args[3], args[4]), 1.0 / inc);
+                    tmp_p = get_torus_mesh(generate_torus(args[0], args[1], args[2], args[3], args[4], inc));
                     sz = tmp_p.size();
                     for (int i = 0 ; i < sz ; i++) {
                         ps.push_back(tmp_p.at(i));
