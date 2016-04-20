@@ -611,7 +611,7 @@ Example:
 int main() {
     long x = 5 + 6;
     printf("hi");
-    return 0;
+    return x;
 }
 
 lexer will first read ``int'', then it will see the paren, back to identifier
@@ -645,12 +645,12 @@ Parser
 
 Example
 
-          Main--
-         / |    \
+          Main__
+         / |    \__
         /  |       \
        =   printf   return
       / \     |       |
- long x  +   "hi"     0
+ long x  +   "hi"     x
         / \
        5   6
 
@@ -659,3 +659,38 @@ remove code formatting characters
 
 Errors Caught:
 - Any keyword/structural level syntax errors
+
+Semantic Analyzer
+-----------------
+> performs semantic analysis...
+> the semantic analyzer knows the semantics of the language, how to map the
+  tokens to known operations or variables and values
+> knows how to navigate the tree
+> input: the syntax tree
+> output: 2 things
+    1. the symbol table <-- list of all identifier in the code, with associated
+       info
+
+       main   | int function
+       x      | long
+       printf | int function
+
+    2. list of operations in the order to be performed
+
+       + : 5, 6
+       = : x
+       . . .
+
+    note that there is a link between operation list and symbol table
+    also note that no operations are actually performed
+
+Optimizer
+---------
+> it optimizes stuff :)
+> looks through operation list and replace them w/ efficient ones
+
+Code Generator
+--------------
+> input: symbol table and operation list
+> knows what the operations translates to in machine code
+> generates the program file
