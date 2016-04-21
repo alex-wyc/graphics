@@ -694,3 +694,9 @@ Code Generator
 > input: symbol table and operation list
 > knows what the operations translates to in machine code
 > generates the program file
+
+
+Lexer Generator == lex or flex = free lex
+
+parser/semantic analyzer generator == yacc (yet another compiler compiler) ==
+bison = free yyac
