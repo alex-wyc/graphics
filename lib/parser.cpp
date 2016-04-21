@@ -35,34 +35,57 @@ void parse_file(char *file, int debug) {
     float args[8] = {0};
     edge_set es, tmp;
     polygon_set ps, tmp_p;
-    float current[4][4], A[4][4];
     color c;
     c.r = c.g = c.b = 255;
     size_t sz;
     float inc = DEFAULT_INC;
 
+    std::stack<Coor_system> origins;
+
+    Coor_system ident;
+    origins.push(ident);
+
     // FIXME add ability to read from term
     std::ifstream fin(file);
 
     while (!fin.eof()) {
+        //getchar();
         fin >> command;
         if (debug) {
             std::cout << ":" << command << ":\n";
+            //std::cout << origins.size() << '\n';
         }
         switch (command[0]) {
             case '#': // comment -- do nothing, scan next
                 fin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                 break;
-
+            
+            // {{{ push and pop
+            case 'p': // push or pop
+                if (command[1] == 'u') { // push
+                    Coor_system dup_cs = origins.top().duplicate();
+                    origins.push(dup_cs);
+                }
+                else if (command[1] == 'o') { // pop
+                    origins.pop();
+                }
+                break;
+            // }}}
+            // {{{ line
             case 'l': // line
                 for (int i = 0 ; i < 6 ; i++) {
                     fin >> args[i];
                 }
                 es.push_back(EDGE(PT(args[0], args[1], args[2]),
                                    PT(args[3], args[4], args[5])));
+                tmp = origins.top().transform(es);
+                screen.draw_edge_set(c, tmp);
+                es.clear();
+                tmp.clear();
 
                 break;
-
+            // }}}
+            // {{{ circle or clear
             case 'c': // circle or clear
                 if (command[1] == 'i') { // circle
                     fin >> args[0] >> args[1] >> args[2];
@@ -71,13 +94,17 @@ void parse_file(char *file, int debug) {
                     for (int i = 0 ; i < sz ; i++) {
                         es.push_back(tmp.at(i));
                     }
+                    tmp = origins.top().transform(es);
+                    screen.draw_edge_set(c, tmp);
+                    es.clear();
+                    tmp.clear();
                 }
                 else if (command[1] == 'l') { // clear
-                    es.clear();
-                    ps.clear();
+                    screen.clear_screen();
                 }
                 break;
-
+            // }}}
+            // {{{ hermite
             case 'h': // hermite
                 for (int i = 0 ; i < 8 ; i++) {
                     fin >> args[i];
@@ -87,8 +114,13 @@ void parse_file(char *file, int debug) {
                 for (int i = 0 ; i < sz ; i++) {
                     es.push_back(tmp.at(i));
                 }
+                tmp = origins.top().transform(es);
+                screen.draw_edge_set(c, tmp);
+                es.clear();
+                tmp.clear();
                 break;
-
+            // }}}
+            // {{{ bezier or box
             case 'b': // bezier or box
                 if (command[1] == 'e') { // bezier
                     for (int i = 0 ; i < 8 ; i++) {
@@ -99,6 +131,10 @@ void parse_file(char *file, int debug) {
                     for (int i = 0 ; i < sz ; i++) {
                         es.push_back(tmp.at(i));
                     }
+                    tmp = origins.top().transform(es);
+                    screen.draw_edge_set(c, tmp);
+                    es.clear();
+                    tmp.clear();
                 }
                 else if (command[1] == 'o') { // box
                     for (int i = 0 ; i < 6 ; i++) {
@@ -109,33 +145,34 @@ void parse_file(char *file, int debug) {
                     for (int i = 0 ; i < sz ; i++) {
                         ps.push_back(tmp_p.at(i));
                     }
+                    tmp_p = origins.top().transform(ps);
+                    screen.draw_polygon_set(c, tmp_p);
+                    ps.clear();
+                    tmp_p.clear();
                 }
                 break;
-
-            case 'i': // ident
-                gen_identity_matrix_4(A);
-                break;
-
+            // }}}
+            // {{{ scale/save/sphere/set
             case 's': // scale or save or sphere or set
                 if (command[1] == 'c') { // scale
                     fin >> args[0] >> args[1] >> args[2];
-                    generate_dilation_matrix(current, args[0], args[1], args[2]);
-                    matrix_multiply_4(A, current, A);
+                    origins.top().dilate(args[0], args[1], args[2]);
                 }
                 else if (command[1] == 'a') { // save
                     fin >> command; // filename
-                    screen.clear_screen();
-                    screen.draw_edge_set(c, es);
-                    screen.draw_polygon_set(c, ps);
                     screen.save_ppm(command);
                 }
                 else if (command[1] == 'p') { // sphere
                     fin >> args[0] >> args[1] >> args[2] >> args[3];
-                    tmp_p = get_sphere_mesh(generate_sphere(args[0], args[1], args[2], args[3], inc), 1.0 / inc);
+                    tmp_p = get_sphere_mesh(generate_sphere(args[0], args[1], args[2], args[3], inc));
                     sz = tmp_p.size();
                     for (int i = 0 ; i < sz ; i++) {
                         ps.push_back(tmp_p.at(i));
                     }
+                    tmp_p = origins.top().transform(ps);
+                    screen.draw_polygon_set(c, tmp_p);
+                    ps.clear();
+                    tmp_p.clear();
                 }
                 else if (command[1] == 'e') { // set
                     fin >> command; // color or increment
@@ -150,56 +187,53 @@ void parse_file(char *file, int debug) {
                     }
                 }
                 break;
-
+            // }}}
+            // {{{ translate or torus
             case 't': // translate or torus
                 if (command[1] == 'r') {
                     fin >> args[0] >> args[1] >> args[2];
-                    generate_translation_matrix(current, args[0], args[1], args[2]);
-                    matrix_multiply_4(A, current, A);
+                    origins.top().translate(args[0], args[1], args[2]);
                 }
                 else if (command[1] == 'o') { // torus TODO
                     fin >> args[0] >> args[1] >> args[2] >> args[3] >> args[4];
-                    tmp_p = get_torus_mesh(generate_torus(args[0], args[1], args[2], args[3], args[4]), 1.0 / inc);
+                    tmp_p = get_torus_mesh(generate_torus(args[0], args[1], args[2], args[3], args[4], inc));
                     sz = tmp_p.size();
                     for (int i = 0 ; i < sz ; i++) {
                         ps.push_back(tmp_p.at(i));
                     }
+                    tmp_p = origins.top().transform(ps);
+                    screen.draw_polygon_set(c, tmp_p);
+                    ps.clear();
+                    tmp_p.clear();
                 }
                 break;
-
+            // }}}
+            // {{{ xrotate/yrotate/zrotate
             case 'x': // xrotate
                 fin >> args[0];
-                generate_rotation_matrix(current, X, args[0]);
-                matrix_multiply_4(A, current, A);
+                origins.top().rotate(X, args[0]);
                 break;
 
             case 'y': // yrotate
                 fin >> args[0];
-                generate_rotation_matrix(current, Y, args[0]);
-                matrix_multiply_4(A, current, A);
+                origins.top().rotate(Y, args[0]);
                 break;
 
             case 'z': // zrotate
                 fin >> args[0];
-                generate_rotation_matrix(current, Z, args[0]);
-                matrix_multiply_4(A, current, A);
+                origins.top().rotate(Z, args[0]);
                 break;
-
-            case 'a': // apply
-                es = transform_figure(es, A);
-                ps = transform_figure(ps, A);
-                break;
-
+            // }}}
+            // {{{ display
             case 'd': // display
-                screen.clear_screen();
-                screen.draw_edge_set(c, es);
-                screen.draw_polygon_set(c, ps);
                 screen.display();
                 break;
-
+            // }}}
+            // {{{ quit
             case 'q': //quit
                 return;
                 break;
+            // }}}
 
             default:
                 std::cout << "Parser error:\ncommand not found: " << command << '\n';

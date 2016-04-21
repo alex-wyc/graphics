@@ -69,10 +69,9 @@ point_set generate_sphere(float cx, float cy, float cz, float r, float inc) {
     return ps;
 }
 
-polygon_set get_sphere_mesh(point_set sphere, int n) {
-    n++;
+polygon_set get_sphere_mesh(point_set sphere) {
     size_t sz = sphere.size();
-    n += sz % n; // HACK << WHY DOES THIS WORK THO
+    int n = (int) sqrt(sz);
     polygon_set ps;
     for (int j = 0 ; j < sz ; j = j + n) {
         for (int i = 0 ; i < n - 1 ; i++) {
@@ -102,12 +101,12 @@ point_set generate_torus(float cx, float cy, float cz, float r1, float r2, float
     return ps;
 }
 
-polygon_set get_torus_mesh(point_set torus, int n) { // FIXME
-    n++;
+polygon_set get_torus_mesh(point_set torus) { // FIXME
     size_t sz = torus.size();
     //n += sz % n;
     //std::cout << sz % n << '\n';
     //getchar();
+    int n = (int) sqrt(sz);
     polygon_set ps;
     for (int j = 0 ; j < sz ; j = j + n) {
         for (int i = 0 ; i < n ; i++) {

@@ -80,6 +80,12 @@ edge transform(edge e, float A[4][4]) {
     return EDGE(transform(e.first, A), transform(e.second, A));
 }
 
+polygon transform(polygon p, float A[4][4]) {
+    return POLYGON(transform(GET_X(p), A),
+                   transform(GET_Y(p), A),
+                   transform(GET_Z(p), A));
+}
+
 edge_set transform_figure(edge_set es, float A[4][4]) {
     size_t s = es.size();
     edge_set to_return(s);

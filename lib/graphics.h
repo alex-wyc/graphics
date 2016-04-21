@@ -6,6 +6,7 @@
 #include <cmath>
 #include <tuple>
 #include <vector>
+#include <stack>
 #include <algorithm>
 #include <fstream>
 #include <iostream>
@@ -82,6 +83,23 @@ class Canvas {
         void save_ppm(const char *file);
 };
 
+// coor_system.cpp
+class Coor_system {
+        float master[4][4];
+
+    public:
+        Coor_system();
+
+        void set_master(float new_val[4][4]);
+        Coor_system duplicate();
+        void translate(float dx, float dy, float dz);
+        void dilate(float dx, float dy, float dz);
+        void rotate(int axis, float angle);
+        edge_set transform(edge_set es);
+        polygon_set transform(polygon_set ps);
+        void print();
+};
+
 float *to_array(point p);
 
 // general utilities, located in util.cpp
@@ -106,6 +124,7 @@ void duplicate_matrix(float result[4][4], float src[4][4]);
 
 point transform(point v, float A[4][4]);
 edge transform(edge e, float A[4][4]);
+polygon transform(polygon p, float A[4][4]);
 edge_set transform_figure(edge_set es, float A[4][4]);
 polygon_set transform_figure(polygon_set ps, float A[4][4]);
 
@@ -144,7 +163,7 @@ point_set generate_sphere(float cx, float cy, float cz, float r, float inc = DEF
 point_set generate_torus(float cx, float cy, float cz, float r1, float r2, float inc = DEFAULT_INC);
 
 polygon_set get_box_mesh(point_set ps);
-polygon_set get_sphere_mesh(point_set ps, int n);
-polygon_set get_torus_mesh(point_set ps, int n);
+polygon_set get_sphere_mesh(point_set ps);
+polygon_set get_torus_mesh(point_set ps);
 
 #endif // GRAPHICS_H_
