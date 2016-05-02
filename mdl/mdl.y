@@ -244,8 +244,9 @@ SPHERE STRING DOUBLE DOUBLE DOUBLE DOUBLE STRING
   op[lastop].op.sphere.d[3] = 0;
   op[lastop].op.sphere.r = $6;
   op[lastop].op.sphere.constants = NULL;
-  m = (struct matrix *)new_matrix(4,4);
-  op[lastop].op.sphere.cs = add_symbol($7,SYM_MATRIX,m);
+  float mc[4][4];
+  memcpy(mc, m, sizeof(m[0][0]) * 4 * 4);
+  op[lastop].op.sphere.cs = add_symbol($7,SYM_MATRIX,mc);
   c = (struct constants *)malloc(sizeof(struct constants));
   op[lastop].op.sphere.constants = add_symbol($2,SYM_CONSTANTS,c);
   lastop++;
@@ -277,8 +278,9 @@ TORUS DOUBLE DOUBLE DOUBLE DOUBLE DOUBLE STRING
   op[lastop].op.torus.r0 = $5;
   op[lastop].op.torus.r1 = $6;
   op[lastop].op.torus.constants = NULL;
-  m = (struct matrix *)new_matrix(4,4);
-  op[lastop].op.torus.cs = add_symbol($7,SYM_MATRIX,m);
+  float mc[4][4];
+  memcpy(mc, m, sizeof(m[0][0]) * 4 * 4);
+  op[lastop].op.torus.cs = add_symbol($7,SYM_MATRIX,mc);
   lastop++;
 }|
 TORUS STRING DOUBLE DOUBLE DOUBLE DOUBLE DOUBLE
@@ -309,8 +311,9 @@ TORUS STRING DOUBLE DOUBLE DOUBLE DOUBLE DOUBLE STRING
   op[lastop].op.torus.r1 = $7;
   c = (struct constants *)malloc(sizeof(struct constants));
   op[lastop].op.torus.constants = add_symbol($2,SYM_CONSTANTS,c);
-  m = (struct matrix *)new_matrix(4,4);
-  op[lastop].op.torus.cs = add_symbol($8,SYM_MATRIX,m);
+  float mc[4][4];
+  memcpy(mc, m, sizeof(m[0][0]) * 4 * 4);
+  op[lastop].op.torus.cs = add_symbol($8,SYM_MATRIX,mc);
 
   lastop++;
 }| 
@@ -345,8 +348,9 @@ BOX DOUBLE DOUBLE DOUBLE DOUBLE DOUBLE DOUBLE STRING
   op[lastop].op.box.d1[3] = 0;
 
   op[lastop].op.box.constants = NULL;
-  m = (struct matrix *)new_matrix(4,4);
-  op[lastop].op.box.cs = add_symbol($8,SYM_MATRIX,m);
+    float mc[4][4];
+  memcpy(mc, m, sizeof(m[0][0]) * 4 * 4);
+op[lastop].op.box.cs = add_symbol($8,SYM_MATRIX,mc);
   lastop++;
 }|
 BOX STRING DOUBLE DOUBLE DOUBLE DOUBLE DOUBLE DOUBLE
@@ -380,8 +384,9 @@ BOX STRING DOUBLE DOUBLE DOUBLE DOUBLE DOUBLE DOUBLE STRING
   op[lastop].op.box.d1[3] = 0;
   c = (struct constants *)malloc(sizeof(struct constants));
   op[lastop].op.box.constants = add_symbol($2,SYM_CONSTANTS,c);
-  m = (struct matrix *)new_matrix(4,4);
-  op[lastop].op.box.cs = add_symbol($9,SYM_MATRIX,m);
+  float mc[4][4];
+  memcpy(mc, m, sizeof(m[0][0]) * 4 * 4);
+  op[lastop].op.box.cs = add_symbol($9,SYM_MATRIX,mc);
 
   lastop++;
 }|
@@ -418,8 +423,9 @@ LINE DOUBLE DOUBLE DOUBLE STRING DOUBLE DOUBLE DOUBLE
   op[lastop].op.line.p1[2] = $8;
   op[lastop].op.line.p1[3] = 0;
   op[lastop].op.line.constants = NULL;
-  m = (struct matrix *)new_matrix(4,4);
-  op[lastop].op.line.cs0 = add_symbol($5,SYM_MATRIX,m);
+    float mc[4][4];
+  memcpy(mc, m, sizeof(m[0][0]) * 4 * 4);
+op[lastop].op.line.cs0 = add_symbol($5,SYM_MATRIX,mc);
   op[lastop].op.line.cs1 = NULL;
   lastop++;
 }|
@@ -437,8 +443,9 @@ LINE DOUBLE DOUBLE DOUBLE DOUBLE DOUBLE DOUBLE STRING
   op[lastop].op.line.p1[3] = 0;
   op[lastop].op.line.constants = NULL;
   op[lastop].op.line.cs0 = NULL;
-  m = (struct matrix *)new_matrix(4,4);
-  op[lastop].op.line.cs1 = add_symbol($8,SYM_MATRIX,m);
+  float mc[4][4];
+  memcpy(mc, m, sizeof(m[0][0]) * 4 * 4);
+  op[lastop].op.line.cs1 = add_symbol($8,SYM_MATRIX,mc);
   lastop++;
 }|
 LINE DOUBLE DOUBLE DOUBLE STRING DOUBLE DOUBLE DOUBLE STRING
@@ -454,10 +461,12 @@ LINE DOUBLE DOUBLE DOUBLE STRING DOUBLE DOUBLE DOUBLE STRING
   op[lastop].op.line.p1[2] = $8;
   op[lastop].op.line.p1[3] = 0;
   op[lastop].op.line.constants = NULL;
-  m = (struct matrix *)new_matrix(4,4);
-  op[lastop].op.line.cs0 = add_symbol($5,SYM_MATRIX,m);
-  m = (struct matrix *)new_matrix(4,4);
-  op[lastop].op.line.cs1 = add_symbol($9,SYM_MATRIX,m);
+  float mc[4][4];
+  memcpy(mc, m, sizeof(m[0][0]) * 4 * 4);
+  op[lastop].op.line.cs0 = add_symbol($5,SYM_MATRIX,mc);
+  float md[4][4];
+  memcpy(md, m, sizeof(m[0][0]) * 4 * 4);
+  op[lastop].op.line.cs1 = add_symbol($9,SYM_MATRIX,md);
   lastop++;
 }|
 /* now do constants, and constants with the cs stuff */
@@ -493,8 +502,9 @@ LINE STRING DOUBLE DOUBLE DOUBLE STRING DOUBLE DOUBLE DOUBLE
   op[lastop].op.line.p1[3] = 0;
   c = (struct constants *)malloc(sizeof(struct constants));
   op[lastop].op.line.constants = add_symbol($2,SYM_CONSTANTS,c);
-  m = (struct matrix *)new_matrix(4,4);
-  op[lastop].op.line.cs0 = add_symbol($6,SYM_MATRIX,m);
+  float mc[4][4];
+  memcpy(mc, m, sizeof(m[0][0]) * 4 * 4);
+  op[lastop].op.line.cs0 = add_symbol($6,SYM_MATRIX,mc);
   op[lastop].op.line.cs1 = NULL;
   lastop++;
 }|
@@ -513,8 +523,9 @@ LINE STRING DOUBLE DOUBLE DOUBLE DOUBLE DOUBLE DOUBLE STRING
   c = (struct constants *)malloc(sizeof(struct constants));
   op[lastop].op.line.constants = add_symbol($2,SYM_CONSTANTS,c);
   op[lastop].op.line.cs0 = NULL;
-  m = (struct matrix *)new_matrix(4,4);
-  op[lastop].op.line.cs1 = add_symbol($9,SYM_MATRIX,m);
+  float mc[4][4];
+  memcpy(mc, m, sizeof(m[0][0]) * 4 * 4);
+  op[lastop].op.line.cs1 = add_symbol($9,SYM_MATRIX,mc);
   op[lastop].op.line.cs0 = NULL;
   lastop++;
 }|
@@ -532,10 +543,12 @@ LINE STRING DOUBLE DOUBLE DOUBLE STRING DOUBLE DOUBLE DOUBLE STRING
   op[lastop].op.line.p1[3] = 0;
   c = (struct constants *)malloc(sizeof(struct constants));
   op[lastop].op.line.constants = add_symbol($2,SYM_CONSTANTS,c);
-  m = (struct matrix *)new_matrix(4,4);
-  op[lastop].op.line.cs0 = add_symbol($6,SYM_MATRIX,m);
-  m = (struct matrix *)new_matrix(4,4);
-  op[lastop].op.line.cs1 = add_symbol($10,SYM_MATRIX,m);
+  float mc[4][4];
+  memcpy(mc, m, sizeof(m[0][0]) * 4 * 4);
+  op[lastop].op.line.cs0 = add_symbol($6,SYM_MATRIX,mc);
+  float md[4][4];
+  memcpy(md, m, sizeof(m[0][0]) * 4 * 4);
+  op[lastop].op.line.cs1 = add_symbol($10,SYM_MATRIX,md);
   lastop++;
 }|
 MESH CO STRING
