@@ -4,7 +4,7 @@
 
 #include "parser.h"
 #include "symtab.h"
-#include "../lib/graphics.h"
+#include "graphics.h"
 
 SYMTAB symtab[MAX_SYMBOLS];
 int lastsym = 0;
@@ -96,7 +96,7 @@ SYMTAB *add_symbol(char *name, int type, void *data)
       t->s.c = (struct constants *)data;
       break;
     case SYM_MATRIX:
-      t->s.m = (struct matrix *)data;
+      t->s.m = (float[4][4])data;
       break;
     case SYM_LIGHT:
       t->s.l = (struct light *)data;
@@ -113,20 +113,20 @@ SYMTAB *add_symbol(char *name, int type, void *data)
 
 SYMTAB *lookup_symbol(char *name)
 {
-  int i;
-  for (i=0;i<lastsym;i++)
+    int i;
+    for (i=0;i<lastsym;i++)
     {
-      if (!strcmp(name,symtab[i].name))
-	{
-	  return (SYMTAB *) &(symtab[i]);
-	}
+        if (!strcmp(name,symtab[i].name))
+        {
+            return (SYMTAB *) &(symtab[i]);
+        }
     }
-  return (SYMTAB *)NULL;
+    return (SYMTAB *)NULL;
 }
 
 void set_value(SYMTAB *p, double value)
 {
-  p->s.value = value;
+    p->s.value = value;
 }
 
 

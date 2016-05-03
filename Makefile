@@ -1,9 +1,30 @@
-OBJECTS=bin/canvas.o bin/transformation.o bin/curves.o bin/parser.o bin/util.o bin/3d.o bin/coor_system.o
+OBJECTS=bin/canvas.o bin/transformation.o bin/curves.o bin/util.o bin/3d.o bin/coor_system.o bin/symtab.o bin/print_pcode.o bin/my_main.o
 CFLAGS= -std=c++11 -O2
+LDFLAGS= -lm
 CC=g++
 
-script: $(OBJECTS)
-	$(CC) $(CFLAGS) -o run_script.out main.cpp $(OBJECTS)
+all: parser
+
+parser: lex.yy.c y.tab.c y.tab.h $(OBJECTS)
+	$(CC) -o run_script $(CFLAGS) lex.yy.c y.tab.c $(OBJECTS) $(LDFLAGS)
+
+lex.yy.c: lib/mdl.l y.tab.h 
+	flex -I lib/mdl.l
+
+y.tab.c: lib/mdl.y lib/symtab.h lib/parser.h
+	bison -d -y lib/mdl.y
+
+y.tab.h: lib/mdl.y 
+	bison -d -y lib/mdl.y
+
+bin/my_main.o: my_main.cpp
+	$(CC) -c $(CFLAGS) my_main.cpp -o bin/my_main.o
+
+bin/symtab.o: lib/symtab.c lib/parser.h
+	$(CC) -c $(CFLAGS) lib/symtab.c -o bin/symtab.o
+
+bin/print_pcode.o: lib/print_pcode.c lib/parser.h
+	$(CC) -c $(CFLAGS) lib/print_pcode.c -o bin/print_pcode.o
 
 bin/coor_system.o: lib/coor_system.cpp lib/graphics.h
 	$(CC) $(CFLAGS) -c lib/coor_system.cpp -o bin/coor_system.o
@@ -14,9 +35,6 @@ bin/canvas.o: lib/canvas.cpp lib/graphics.h
 bin/curves.o: lib/curves.cpp lib/graphics.h
 	$(CC) $(CFLAGS) -c lib/curves.cpp -o bin/curves.o
 
-bin/parser.o: lib/parser.cpp lib/graphics.h
-	$(CC) $(CFLAGS) -c lib/parser.cpp -o bin/parser.o
-
 bin/util.o: lib/util.cpp lib/graphics.h
 	$(CC) $(CFLAGS) -c lib/util.cpp -o bin/util.o
 
@@ -25,9 +43,6 @@ bin/3d.o: lib/3d.cpp lib/graphics.h
 
 bin/transformation.o: lib/transformation.cpp lib/graphics.h
 	$(CC) $(CFLAGS) -c lib/transformation.cpp -o bin/transformation.o
-
-run_script: script
-	./run_script.out script
 
 clean:
 	rm bin/*
