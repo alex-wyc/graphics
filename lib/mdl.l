@@ -1,13 +1,13 @@
 
 /* Initial C code */
 %{
-#include "../y.tab.h"
+#include "y.tab.h"
 %}
 
 
 ID [a-zA-Z][a-zA-Z0-9_]*
 
-
+%option c++
 %%
 [ \t]+ ;
 

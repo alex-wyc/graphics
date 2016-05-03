@@ -21,7 +21,7 @@ bin/my_main.o: my_main.cpp
 	$(CC) -c $(CFLAGS) my_main.cpp -o bin/my_main.o
 
 bin/symtab.o: lib/symtab.c lib/parser.h
-	$(CC) -c $(CFLAGS) lib/symtab.c -o bin/symtab.o
+	$(CC) -c $(CFLAGS) lib/symtab.c -o bin/symtab.o -fpermissive
 
 bin/print_pcode.o: lib/print_pcode.c lib/parser.h
 	$(CC) -c $(CFLAGS) lib/print_pcode.c -o bin/print_pcode.o

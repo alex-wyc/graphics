@@ -3,14 +3,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "parser.h"
+#include "lib/parser.h"
 
   SYMTAB *s;
   struct light *l;
   struct constants *c;
   struct command op[MAX_COMMANDS];
   float m[4][4];
-  memset(m, 0, sizeof(m[0][0]) * 4 * 4); // zero the array
   int lastop=0;
   int lineno=0;
 #define YYERROR_VERBOSE 1
@@ -36,6 +35,7 @@
 %token <string> PUSH POP SAVE GENERATE_RAYFILES
 %token <string> SHADING SHADING_TYPE SETKNOBS FOCAL DISPLAY WEB
 %token <string> CO
+
 %%
 /* Grammar rules */
 
@@ -150,7 +150,7 @@ SAVE_COORDS STRING
   lineno++;
   op[lastop].opcode = SAVE_COORDS;
   float mc[4][4];
-  memcpy(mc, m, sizeof(m[0][0]) * 4 * 4);
+  memset(mc, 0, sizeof(mc[0][0]) * 4 * 4); // zero the array
   op[lastop].op.save_coordinate_system.p = add_symbol($2,SYM_MATRIX,mc);
   lastop++;
 }|
@@ -215,7 +215,7 @@ SPHERE DOUBLE DOUBLE DOUBLE DOUBLE STRING
   op[lastop].op.sphere.r = $5;
   op[lastop].op.sphere.constants = NULL;
   float mc[4][4];
-  memcpy(mc, m, sizeof(mc[0][0]) * 4 * 4);
+  memset(mc, 0, sizeof(mc[0][0]) * 4 * 4);
   op[lastop].op.sphere.cs = add_symbol($6,SYM_MATRIX,mc);
   lastop++;
 }|
@@ -244,7 +244,7 @@ SPHERE STRING DOUBLE DOUBLE DOUBLE DOUBLE STRING
   op[lastop].op.sphere.r = $6;
   op[lastop].op.sphere.constants = NULL;
   float mc[4][4];
-  memcpy(mc, m, sizeof(m[0][0]) * 4 * 4);
+  memset(mc, 0, sizeof(m[0][0]) * 4 * 4);
   op[lastop].op.sphere.cs = add_symbol($7,SYM_MATRIX,mc);
   c = (struct constants *)malloc(sizeof(struct constants));
   op[lastop].op.sphere.constants = add_symbol($2,SYM_CONSTANTS,c);
@@ -278,7 +278,7 @@ TORUS DOUBLE DOUBLE DOUBLE DOUBLE DOUBLE STRING
   op[lastop].op.torus.r1 = $6;
   op[lastop].op.torus.constants = NULL;
   float mc[4][4];
-  memcpy(mc, m, sizeof(m[0][0]) * 4 * 4);
+  memset(mc, 0, sizeof(m[0][0]) * 4 * 4);
   op[lastop].op.torus.cs = add_symbol($7,SYM_MATRIX,mc);
   lastop++;
 }|
@@ -311,7 +311,7 @@ TORUS STRING DOUBLE DOUBLE DOUBLE DOUBLE DOUBLE STRING
   c = (struct constants *)malloc(sizeof(struct constants));
   op[lastop].op.torus.constants = add_symbol($2,SYM_CONSTANTS,c);
   float mc[4][4];
-  memcpy(mc, m, sizeof(m[0][0]) * 4 * 4);
+  memset(mc, 0, sizeof(m[0][0]) * 4 * 4);
   op[lastop].op.torus.cs = add_symbol($8,SYM_MATRIX,mc);
 
 lastop++;
@@ -348,7 +348,7 @@ BOX DOUBLE DOUBLE DOUBLE DOUBLE DOUBLE DOUBLE STRING
 
 op[lastop].op.box.constants = NULL;
     float mc[4][4];
-  memcpy(mc, m, sizeof(m[0][0]) * 4 * 4);
+  memset(mc, 0, sizeof(m[0][0]) * 4 * 4);
 op[lastop].op.box.cs = add_symbol($8,SYM_MATRIX,mc);
   lastop++;
 }|
@@ -384,7 +384,7 @@ BOX STRING DOUBLE DOUBLE DOUBLE DOUBLE DOUBLE DOUBLE STRING
   c = (struct constants *)malloc(sizeof(struct constants));
   op[lastop].op.box.constants = add_symbol($2,SYM_CONSTANTS,c);
   float mc[4][4];
-  memcpy(mc, m, sizeof(m[0][0]) * 4 * 4);
+  memset(mc, 0, sizeof(m[0][0]) * 4 * 4);
   op[lastop].op.box.cs = add_symbol($9,SYM_MATRIX,mc);
 
 lastop++;
@@ -423,7 +423,7 @@ LINE DOUBLE DOUBLE DOUBLE STRING DOUBLE DOUBLE DOUBLE
   op[lastop].op.line.p1[3] = 0;
   op[lastop].op.line.constants = NULL;
     float mc[4][4];
-  memcpy(mc, m, sizeof(m[0][0]) * 4 * 4);
+  memset(mc, 0, sizeof(m[0][0]) * 4 * 4);
 op[lastop].op.line.cs0 = add_symbol($5,SYM_MATRIX,mc);
   op[lastop].op.line.cs1 = NULL;
   lastop++;
@@ -443,7 +443,7 @@ LINE DOUBLE DOUBLE DOUBLE DOUBLE DOUBLE DOUBLE STRING
   op[lastop].op.line.constants = NULL;
   op[lastop].op.line.cs0 = NULL;
   float mc[4][4];
-  memcpy(mc, m, sizeof(m[0][0]) * 4 * 4);
+  memset(mc, 0, sizeof(m[0][0]) * 4 * 4);
   op[lastop].op.line.cs1 = add_symbol($8,SYM_MATRIX,mc);
   lastop++;
 }|
@@ -461,7 +461,7 @@ LINE DOUBLE DOUBLE DOUBLE STRING DOUBLE DOUBLE DOUBLE STRING
   op[lastop].op.line.p1[3] = 0;
   op[lastop].op.line.constants = NULL;
   float mc[4][4];
-  memcpy(mc, m, sizeof(m[0][0]) * 4 * 4);
+  memset(mc, 0, sizeof(m[0][0]) * 4 * 4);
   op[lastop].op.line.cs0 = add_symbol($5,SYM_MATRIX,mc);
   float md[4][4];
   memcpy(md, m, sizeof(m[0][0]) * 4 * 4);
@@ -502,7 +502,7 @@ LINE STRING DOUBLE DOUBLE DOUBLE STRING DOUBLE DOUBLE DOUBLE
   c = (struct constants *)malloc(sizeof(struct constants));
   op[lastop].op.line.constants = add_symbol($2,SYM_CONSTANTS,c);
   float mc[4][4];
-  memcpy(mc, m, sizeof(m[0][0]) * 4 * 4);
+  memset(mc, 0, sizeof(m[0][0]) * 4 * 4);
   op[lastop].op.line.cs0 = add_symbol($6,SYM_MATRIX,mc);
   op[lastop].op.line.cs1 = NULL;
   lastop++;
@@ -523,7 +523,7 @@ LINE STRING DOUBLE DOUBLE DOUBLE DOUBLE DOUBLE DOUBLE STRING
   op[lastop].op.line.constants = add_symbol($2,SYM_CONSTANTS,c);
   op[lastop].op.line.cs0 = NULL;
   float mc[4][4];
-  memcpy(mc, m, sizeof(m[0][0]) * 4 * 4);
+  memset(mc, 0, sizeof(m[0][0]) * 4 * 4);
   op[lastop].op.line.cs1 = add_symbol($9,SYM_MATRIX,mc);
   op[lastop].op.line.cs0 = NULL;
   lastop++;
@@ -543,7 +543,7 @@ LINE STRING DOUBLE DOUBLE DOUBLE STRING DOUBLE DOUBLE DOUBLE STRING
   c = (struct constants *)malloc(sizeof(struct constants));
   op[lastop].op.line.constants = add_symbol($2,SYM_CONSTANTS,c);
   float mc[4][4];
-  memcpy(mc, m, sizeof(m[0][0]) * 4 * 4);
+  memset(mc, 0, sizeof(m[0][0]) * 4 * 4);
   op[lastop].op.line.cs0 = add_symbol($6,SYM_MATRIX,mc);
   float md[4][4];
   memcpy(md, m, sizeof(m[0][0]) * 4 * 4);
@@ -577,7 +577,7 @@ MESH STRING CO STRING STRING
   c = (struct constants *)malloc(sizeof(struct constants));
   op[lastop].op.mesh.constants = add_symbol($2,SYM_CONSTANTS,c);
   float mc[4][4];
-  memcpy(mc, m, sizeof(m[0][0]) * 4 * 4);
+  memset(mc, 0, sizeof(m[0][0]) * 4 * 4);
   op[lastop].op.save_coordinate_system.p = add_symbol($2,SYM_MATRIX,mc);
   lastop++;
 } |

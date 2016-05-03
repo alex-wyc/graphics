@@ -28,7 +28,7 @@ typedef struct
     char *name;
     int type;
     union{
-        float m[4][4];
+        float (*m)[4];
         struct constants *c;
         struct light *l;
         double value;
