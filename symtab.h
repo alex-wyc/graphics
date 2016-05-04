@@ -11,28 +11,28 @@
 
 struct constants 
 {
-    double r[4];
-    double g[4];
-    double b[4];
-    double red,green,blue;
+  double r[4];
+  double g[4];
+  double b[4];
+  double red,green,blue;
 };
 
 struct light
 {
-    double l[4];
-    double c[4];
+  double l[4];
+  double c[4];
 };
 
 typedef struct 
 {
-    char *name;
-    int type;
-    union{
-        float m[4][4];
-        struct constants *c;
-        struct light *l;
-        double value;
-    } s;
+  char *name;
+  int type;
+  union{
+    struct matrix *m;
+    struct constants *c;
+    struct light *l;
+    double value;
+  } s;
 } SYMTAB;
 
 extern SYMTAB symtab[MAX_SYMBOLS];
