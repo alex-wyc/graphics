@@ -700,3 +700,65 @@ Lexer Generator == lex or flex = free lex
 
 parser/semantic analyzer generator == yacc (yet another compiler compiler) ==
 bison = free yyac
+
+ANIMATION
+=========
+
+move a ball... just do MOVE 400 0 0 0
+
+if we want to animate the ball moving right, it is still a move of 400 in x,
+just divided up into multiple move commands
+
+we can add a new parameter, as to how much percentage we apply
+
+MOVE 400 0 0 0 0% --> does nothing
+MOVE 400 0 0 0 25% --> moves 100 (25%)
+MOVE 400 0 0 0 50% --> moves 200 (50%)
+... ... ... ... ... ... ... ...
+MOVE 400 0 0 0 100% --> moves 400 (100%)
+
+like a KNOB dailing up the transformations
+
+but this is annoyingly hard... let the computer do the division :D
+
+MOVE 400 0 0 0 FACTOR
+
+Another part is a new command called VARY --> describe change of knob over time
+
+VARY FACTOR START_FRAME_NO END_FRAME_NO START_VAL END_VAL
+
+New MDL commands
+
+frames <N>
+
+set total number of frames, should only be done once
+
+basename <S>
+
+set the start of each frame filename
+
+In order to animate, we have to run through the command (op list) three times
+to set things up
+
+PASS I:
+- checks for animation commands
+    - frames, basename, vary
+- checks for basic animation command errors
+- sets the number of frames
+- sets the basename
+    - if basename DNE, use a default and alert the user
+
+PASS II:
+- calculate and store knob values
+- creates an array/list where each index maps to a frame and contains a list of
+  knob names and values for that frame
+
+
+PASS III:
+- If no animation, draw image :)
+- If there IS animation code --> draw for each frame
+    - in addition to the current loop through the op list, have another loop
+    
+    1. set val in symtab from list in pass deux
+    2. loop through op list
+    3. save the image as basename+frame#
