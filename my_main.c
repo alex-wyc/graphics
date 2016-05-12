@@ -143,6 +143,7 @@ struct vary_node ** second_pass() {
     int i, j, frames;
     double inc;
 
+
     for (i = 0 ; i < lastop ; i++) {
         if (op[i].opcode == VARY) {
             if (op[i].op.vary.start_frame < 0 || op[i].op.vary.start_frame > num_frames) {
@@ -163,22 +164,24 @@ struct vary_node ** second_pass() {
             frames = op[i].op.vary.end_frame - op[i].op.vary.start_frame;
             inc = (double)(op[i].op.vary.end_val - op[i].op.vary.start_val) / (double)(frames);
 
-            for (j = op[i].op.vary.start_frame ; j < op[i].op.vary.end_frame ; j++) {
+            for (j = 0 ; j < frames ; j++) {
                 current = (struct vary_node *)malloc(sizeof(struct vary_node));
                 strcpy(current->name, op[i].op.vary.p->name);
-                current->value = op[i].op.vary.start_val + (i * inc);
+                current->value = op[i].op.vary.start_val + (j * inc);
 
                 current->next = NULL;
 
-                if (knobs[i]) {
-                    prev = knobs[i];
+                int k = op[i].op.vary.start_frame + j;
+
+                if (knobs[k]) {
+                    prev = knobs[k];
                     while (prev->next) {
                         prev = prev->next;
                     }
                     prev->next = current;
                 }
                 else {
-                    knobs[i] = current;
+                    knobs[k] = current;
                 }
             }
         }
@@ -255,6 +258,10 @@ void my_main( int polygons ) {
     screen t;
     color g;
 
+    s = new_stack();
+    tmp = new_matrix(4, 1000);
+    clear_screen(t);
+
     first_pass();
 
     struct vary_node **knobs = second_pass();
@@ -265,9 +272,9 @@ void my_main( int polygons ) {
 
     g.red = 0;
     g.green = 255;
-    g.blue = 255;
+    g.blue = 0;
 
-    for (frame = 0 ; frame < num_frames ; j++) {
+    for (frame = 0 ; frame < num_frames ; frame++) {
         vn = knobs[frame];
         for (i=0;i<lastop;i++) { 
             switch (op[i].opcode) {
@@ -322,25 +329,22 @@ void my_main( int polygons ) {
                 case MOVE:
                     //get the factors
                     xval = op[i].op.move.d[0];
-                    yval =  op[i].op.move.d[1];
+                    yval = op[i].op.move.d[1];
                     zval = op[i].op.move.d[2];
 
-                    while (strcmp(vn->name, op[i].op.move.p->name) != 0) {
-                        if (vn->next) {
+                    if (vn && op[i].op.move.p) {
+                        while (vn->next && strcmp(vn->name, op[i].op.move.p->name) != 0) {
                             vn = vn->next;
                         }
-                        else {
-                            break;
+
+                        if (strcmp(vn->name, op[i].op.move.p->name) == 0) {
+                            xval = xval * vn->value;
+                            yval = yval * vn->value;
+                            zval = zval * vn->value;
                         }
-                    }
 
-                    if (strcmp(vn->name, op[i].op.move.p->name) == 0) {
-                        xval = xval * vn->value;
-                        yval = yval * vn->value;
-                        zval = zval * vn->value;
+                        vn = knobs[frame];
                     }
-
-                    vn = knobs[frame];
     
                     transform = make_translate( xval, yval, zval );
                     //multiply by the existing origin
@@ -355,22 +359,19 @@ void my_main( int polygons ) {
                     yval = op[i].op.scale.d[1];
                     zval = op[i].op.scale.d[2];
 
-                    while (strcmp(vn->name, op[i].op.scale.p->name) != 0) {
-                        if (vn->next) {
+                    if (vn && op[i].op.scale.p) {
+                        while (vn->next && strcmp(vn->name, op[i].op.scale.p->name) != 0) {
                             vn = vn->next;
                         }
-                        else {
-                            break;
+
+                        if (strcmp(vn->name, op[i].op.scale.p->name) == 0) {
+                            xval = xval * vn->value;
+                            yval = yval * vn->value;
+                            zval = zval * vn->value;
                         }
-                    }
 
-                    if (strcmp(vn->name, op[i].op.scale.p->name) == 0) {
-                        xval = xval * vn->value;
-                        yval = yval * vn->value;
-                        zval = zval * vn->value;
+                        vn = knobs[frame];
                     }
-
-                    vn = knobs[frame];
    
                     transform = make_scale( xval, yval, zval );
                     matrix_mult( s->data[ s->top ], transform );
@@ -382,23 +383,20 @@ void my_main( int polygons ) {
                 case ROTATE:
                     xval = op[i].op.rotate.degrees * ( M_PI / 180 );
 
-                    while (strcmp(vn->name, op[i].op.rotate.p->name) != 0) {
-                        if (vn->next) {
+                    if (vn && op[i].op.rotate.p) {
+                        while (vn->next && strcmp(vn->name, op[i].op.rotate.p->name) != 0) {
                             vn = vn->next;
                         }
-                        else {
-                            break;
+
+                        if (strcmp(vn->name, op[i].op.rotate.p->name) == 0) {
+                            xval = xval * vn->value;
+                            yval = yval * vn->value;
+                            zval = zval * vn->value;
                         }
+
+                        vn = knobs[frame];
                     }
 
-                    if (strcmp(vn->name, op[i].op.rotate.p->name) == 0) {
-                        xval = xval * vn->value;
-                        yval = yval * vn->value;
-                        zval = zval * vn->value;
-                    }
-
-                    vn = knobs[frame];
-   
                     //get the axis
                     if ( op[i].op.rotate.axis == 0 ) 
                         transform = make_rotX( xval );
@@ -426,20 +424,21 @@ void my_main( int polygons ) {
                     display( t );
                     break;
             // }}}
-            }
-           
-            if (num_frames > 1) { // is animation
-                mkdir(name, 0777);
-                sprintf(frame_name, "%s/%s%03d.png", name, name, frame);
-                printf("done saving");
-                save_extension(t, frame_name);
-                free_stack( s );
-                s = new_stack();
-                free_matrix( tmp );
-                tmp = new_matrix(4, 1000);
-                clear_screen(t);
-            }
+            }   
         }
+        if (num_frames > 1) { // is animation
+            mkdir(name, 0777);
+            sprintf(frame_name, "%s/%s%03d.png", name, name, frame);
+            printf("Saving %s/%s%03d.png. . .", name, name, frame);
+            save_extension(t, frame_name);
+            printf("\t\t[done]\n");
+            free_stack( s );
+            s = new_stack();
+            free_matrix( tmp );
+            tmp = new_matrix(4, 1000);
+            clear_screen(t);
+        }
+
     }
 
 }
