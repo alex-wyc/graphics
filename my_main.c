@@ -108,7 +108,7 @@ void first_pass() {
         }
     }
 
-    if (!basename_set) {
+    if (num_frames > 1 && !basename_set) {
         strcpy(name, "animation");
         printf("WARNING: name of animation not set, using default \'animation\'");
     }

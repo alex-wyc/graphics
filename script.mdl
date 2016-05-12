@@ -1,0 +1,11 @@
+frames 40
+basename pendulum
+push
+move 250 400 0
+rotate z -30
+rotate z 60 toright
+box -10 0 10 20 250 20
+sphere 0 -300 0 50
+
+vary toright 0 20 0 1
+vary toright 20 40 1 0
