@@ -794,3 +794,13 @@ delta 0:
     delta 0 = (x_T - x_B) / (y_T - y_B)
 
     delta 1 = (x_M - x_B) / (y_M - y_B) OR (x_T - x_M) / (y_T - y_M)
+
+
+FINAL PROJECT
+=============
+
+EXTENDING AND IMPROVING CURRENT GRAPHICS ENGINE
+
+BASELINE = MDL ANIMATION
+
+OTHER MDL COMMANDS, LIKE MESH
