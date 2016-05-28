@@ -804,3 +804,14 @@ EXTENDING AND IMPROVING CURRENT GRAPHICS ENGINE
 BASELINE = MDL ANIMATION
 
 OTHER MDL COMMANDS, LIKE MESH
+
+FRONT OR BACK
+
+With scanline conversion, we need to tell which one is in front and which one is
+in the back
+
+to do this we use z buffers, keep trackof z coordinates, keep each pixel in a z
+buffer
+
+before plotting a pixel check its z value against the z buffer. if the new thing
+has a higher z value then plot the pixel
