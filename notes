@@ -815,3 +815,49 @@ buffer
 
 before plotting a pixel check its z value against the z buffer. if the new thing
 has a higher z value then plot the pixel
+
+Modeling Real Light(n)ing
+=========================
+
+Colors are calculated by looking at:
+    1. The reflective properties of each object
+    2. The properties of the light hitting the object
+
+Lighting Equation
+=================
+
+We want to generate a color valyue for each polygon (or pixel)
+
+If you want a grayscale image you only need to calculate once per polygon
+
+if you want RGB, you have to calculate 3 times
+
+I = Illumination
+
+I_tot = I_ambient + I_diffuse + I_specular
+
+These are diff types of light sources and reflection
+
+
+2 types of light sources
+- Ambient light
+    - Background lighting
+    - His all objects equally
+
+- Point light(s)
+    - lights that come from a specific point
+    - reflection is based on an object's orientation relative to the light
+
+diffuse and specular deal with point
+
+I_ambient
+    Combination of the color of ambient light and the amount and color that the
+    object reflects
+
+I_diffuse
+    Diffuse Reflection -- aka non-shiny reflection
+    Point lights are reflected back equally in all directions
+    Based on the locations of the light and the object
+    
+I_specular
+    Specular Reflection -- aka SHINY reflection
