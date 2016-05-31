@@ -861,3 +861,39 @@ I_diffuse
     
 I_specular
     Specular Reflection -- aka SHINY reflection
+
+
+Reflective Properties
+Represented as the percentage of light reflected back (constants)
+0 \leq K_a, K_d, K_s
+
+K_a + K_d + K_s = 1
+
+Quality of Light
+
+Ambient
+    - C_a: Represent as a color value (0-255)
+    - K_a: constant of ambient reflection (percentage floating pt)
+    - I_ambient = C_a * K_a
+
+Diffuse:
+    - Light reflects evenly --> what parts are going to be brighter?
+    - calculate theta between light and surface normal
+    - C_p: color of light
+    - K_d: constant of diffuse reflection
+    - I_diffuse = C_p * K_d * cos(theta)
+
+Specular:
+    - I_specular = C_p * K_d * cos(alpha)
+    - where alpha is the angle between the view vector and the reflected vector
+      of light
+    - assume normalized N, P = N cos theta
+    - S = P - L
+    - P + S == R tada
+    - In total we have
+        R = something
+
+Shading Models:
+    - Flat shading == calculate I once per polygon
+    - Garad Shading == calculate vertex normals <-- combination of surface
+      normals of all polygons sharing specific vertex
