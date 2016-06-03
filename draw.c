@@ -123,8 +123,7 @@ void draw_polygons( struct matrix *polygons, screen s, color c ) {
 
             // printf("\nT_y: %f\nM_y: %f\nB_y: %f\n", ys[T], ys[M], ys[B]);
 
-            while (y < ys[T]) { // while y is not at top yet
-                printf("%d, %d\n", (int)y, (int)ys[T]);
+            while (y <= ys[T]) { // while y is not at top yet
                 draw_line((int)x0, (int)y, (int)x1, (int)y, s, c); // draw current line
 
                 if (ys[T] - ys[B]) { // div 0 guard
@@ -133,12 +132,12 @@ void draw_polygons( struct matrix *polygons, screen s, color c ) {
 
                 if (y < ys[M]) { // x1 on BM
                     if (ys[M] - ys[B]) { // div 0 guard
-                        x1 += ((xs[M] - xs[B]) / (ys[M] - ys[B]));
+                        x1 = xs[B] + (y - ys[B]) * ((xs[M] - xs[B]) / (ys[M] - ys[B]));
                     }
                 }
                 else { // x1 on MT
                     if (ys[T] - ys[M]) { // div 0 guard
-                        x1 += ((xs[T] - xs[M]) / (ys[T] - ys[M]));
+                        x1 = xs[M] + (y - ys[M]) * ((xs[T] - xs[M]) / (ys[T] - ys[M]));
                     }
                 }
 
