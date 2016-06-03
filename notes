@@ -897,3 +897,9 @@ Shading Models:
     - Flat shading == calculate I once per polygon
     - Garad Shading == calculate vertex normals <-- combination of surface
       normals of all polygons sharing specific vertex
+        - calculate I once per vertex normal
+        - interpolate ways
+
+
+Phong Shading
+    - Calculate vertex normals
