@@ -49,7 +49,7 @@ triangles
 04/16/13 13:13:27
 jdyrlandweaver
 ====================*/
-void draw_polygons( struct matrix *polygons, screen s, color c ) {
+void draw_polygons( struct matrix *polygons, screen s, color c, double **zbuf ) {
 
     int i;  
     for( i=0; i < polygons->lastcol-2; i+=3 ) {
@@ -57,22 +57,29 @@ void draw_polygons( struct matrix *polygons, screen s, color c ) {
         if ( calculate_dot( polygons, i ) < 0 ) {
             draw_line( polygons->m[0][i],
                     polygons->m[1][i],
+                    polygons->m[2][i],
                     polygons->m[0][i+1],
                     polygons->m[1][i+1],
-                    s, c);
+                    polygons->m[2][i+1],
+                    s, c, zbuf);
             draw_line( polygons->m[0][i+1],
                     polygons->m[1][i+1],
+                    polygons->m[2][i+1],
                     polygons->m[0][i+2],
                     polygons->m[1][i+2],
-                    s, c);
+                    polygons->m[2][i+2],
+                    s, c, zbuf);
             draw_line( polygons->m[0][i+2],
                     polygons->m[1][i+2],
+                    polygons->m[2][i+2],
                     polygons->m[0][i],
                     polygons->m[1][i],
-                    s, c);
+                    polygons->m[2][i],
+                    s, c, zbuf);
 
             double *xs = polygons->m[0]; // list of x-coors
             double *ys = polygons->m[1]; // list of y-coors
+            double *zs = polygons->m[2]; // list of z-coors
 
             int B, M, T; // indices for bottom, middle, top points
             // checked, works
@@ -116,28 +123,34 @@ void draw_polygons( struct matrix *polygons, screen s, color c ) {
             //}}}
 
             double x0, x1, y; // x on BT, x on BM or MT, y
+            double z0, z1;
 
             x0 = xs[B];
             x1 = xs[B];
+            z0 = zs[B];
+            z1 = zs[B];
             y = ys[B];
 
             // printf("\nT_y: %f\nM_y: %f\nB_y: %f\n", ys[T], ys[M], ys[B]);
 
             while (y <= ys[T]) { // while y is not at top yet
-                draw_line((int)x0, (int)y, (int)x1, (int)y, s, c); // draw current line
+                draw_line((int)x0, (int)y, (int)z0, (int)x1, (int)y, (int)z1, s, c, zbuf); // draw current line
 
                 if (ys[T] - ys[B]) { // div 0 guard
                     x0 += ((xs[T] - xs[B]) / (ys[T] - ys[B]));
+                    z0 += ((zs[T] - zs[B]) / (ys[T] - ys[B]));
                 }
 
                 if (y < ys[M]) { // x1 on BM
                     if (ys[M] - ys[B]) { // div 0 guard
                         x1 = xs[B] + (y - ys[B]) * ((xs[M] - xs[B]) / (ys[M] - ys[B]));
+                        z1 = zs[B] + (y - ys[B]) * ((zs[M] - zs[B]) / (ys[M] - ys[B]));
                     }
                 }
                 else { // x1 on MT
                     if (ys[T] - ys[M]) { // div 0 guard
                         x1 = xs[M] + (y - ys[M]) * ((xs[T] - xs[M]) / (ys[T] - ys[M]));
+                        z1 = zs[M] + (y - ys[M]) * ((zs[T] - zs[M]) / (ys[T] - ys[M]));
                     }
                 }
 
@@ -614,12 +627,12 @@ Returns:
 add the line connecting (x0, y0, z0) to (x1, y1, z1) to points
 should use add_point
 ====================*/
-                                                void add_edge( struct matrix * points, 
-                                                        double x0, double y0, double z0, 
-                                                        double x1, double y1, double z1) {
-                                                    add_point( points, x0, y0, z0 );
-                                                    add_point( points, x1, y1, z1 );
-                                                }
+void add_edge( struct matrix * points, 
+         double x0, double y0, double z0, 
+         double x1, double y1, double z1) {
+     add_point( points, x0, y0, z0 );
+     add_point( points, x1, y1, z1 );
+}
 
 /*======== void draw_lines() ==========
 Inputs:   struct matrix * points
@@ -629,7 +642,7 @@ Returns:
 Go through points 2 at a time and call draw_line to add that line
 to the screen
 ====================*/
-void draw_lines( struct matrix * points, screen s, color c) {
+void draw_lines( struct matrix * points, screen s, color c, double **zbuf) {
 
     int i;
 
@@ -641,8 +654,8 @@ void draw_lines( struct matrix * points, screen s, color c) {
 
     for ( i = 0; i < points->lastcol - 1; i+=2 ) {
 
-        draw_line( points->m[0][i], points->m[1][i], 
-                points->m[0][i+1], points->m[1][i+1], s, c);
+        draw_line( points->m[0][i], points->m[1][i], points->m[2][i], 
+                points->m[0][i+1], points->m[1][i+1], points->m[2][i+1], s, c, zbuf);
         //FOR DEMONSTRATION PURPOSES ONLY
         //draw extra pixels so points can actually be seen    
         /*
@@ -667,24 +680,31 @@ void draw_lines( struct matrix * points, screen s, color c) {
 }
 
 
-void draw_line(int x0, int y0, int x1, int y1, screen s, color c) {
+void draw_line(int x0, int y0, int z0, int x1, int y1, int z1, screen s, color c, double **zbuf) {
 
     int x, y, d, dx, dy;
 
+    double z, dzdx, dzdy;
+
     x = x0;
     y = y0;
+    z = (double)z0;
 
     //swap points so we're always draing left to right
     if ( x0 > x1 ) {
         x = x1;
         y = y1;
+        z = (double)z1;
         x1 = x0;
         y1 = y0;
+        z1 = z0;
     }
 
     //need to know dx and dy for this version
     dx = (x1 - x) * 2;
     dy = (y1 - y) * 2;
+    dzdx = (z1 - z) / (x1 - x);
+    dzdy = (z1 - z) / (y1 - y);
 
     //positive slope: Octants 1, 2 (5 and 6)
     if ( dy > 0 ) {
@@ -694,7 +714,13 @@ void draw_line(int x0, int y0, int x1, int y1, screen s, color c) {
             d = dy - ( dx / 2 );
 
             while ( x <= x1 ) {
-                plot(s, c, x, y);
+
+                if (z > zbuf[x][y]) {
+                    plot(s, c, x, y);
+                    zbuf[x][y] = z;
+                }
+
+                z += dzdx;
 
                 if ( d < 0 ) {
                     x = x + 1;
@@ -713,7 +739,13 @@ void draw_line(int x0, int y0, int x1, int y1, screen s, color c) {
             d = ( dy / 2 ) - dx;
             while ( y <= y1 ) {
 
-                plot(s, c, x, y );
+                if (z > zbuf[x][y]) {
+                    plot(s, c, x, y );
+                    zbuf[x][y] = z;
+                }
+
+                z += dzdy;
+
                 if ( d > 0 ) {
                     y = y + 1;
                     d = d - dx;
@@ -737,7 +769,12 @@ void draw_line(int x0, int y0, int x1, int y1, screen s, color c) {
 
             while ( x <= x1 ) {
 
-                plot(s, c, x, y);
+                if (z > zbuf[x][y]) {
+                    plot(s, c, x, y);
+                    zbuf[x][y] = z;
+                }
+
+                z += dzdx;
 
                 if ( d > 0 ) {
                     x = x + 1;
@@ -758,7 +795,13 @@ void draw_line(int x0, int y0, int x1, int y1, screen s, color c) {
 
             while ( y >= y1 ) {
 
-                plot(s, c, x, y );
+                if (z > zbuf[x][y]) {
+                    plot(s, c, x, y );
+                    zbuf[x][y] = z;
+                }
+
+                z += dzdy;
+                
                 if ( d < 0 ) {
                     y = y - 1;
                     d = d + dx;
