@@ -287,6 +287,45 @@ void process_knobs() {
     } while ( i != -1 );
 }
 
+void import_mesh(struct matrix *dest, char *filepath) {
+    FILE *fp;
+    char *line = NULL;
+    size_t len = 0;
+    char *coor;
+    double coors[9];
+    int i = 0, line_num = 0;
+
+    fp = fopen(filepath, "r");
+    if (!fp) {
+        fprintf(stderr, "Error opening mesh file: %s\n", filepath);
+        exit(1);
+    }
+
+    while (getline(&line, &len, fp) != -1) {
+        line_num++;
+        while (line) {
+            coor = strsep(&line, " ");
+            sscanf(coor, "%lf", &coors[i++]);
+        }
+        if (i != 10) {
+            printf("%d\n", i);
+            fprintf(stderr, "Invalid mesh file: line %d\n", line_num);
+            exit(1);
+        }
+        add_polygon(dest, coors[0], coors[1], coors[2],
+                          coors[3], coors[4], coors[5],
+                          coors[6], coors[7], coors[8]);
+        i = 0;
+    }
+    
+    fclose(fp);
+
+    if (line) {
+        free(line);
+    }
+    return;
+}
+
 
 /*======== void my_main() ==========
 Inputs:   int polygons  
@@ -426,9 +465,6 @@ void my_main( int polygons ) {
                             op[i].op.box.d1[1],
                             op[i].op.box.d1[2]);
                     matrix_mult( s->data[ s->top ], tmp );
-                    g.red = rand() % 255;
-                    g.blue = rand() % 255;
-                    g.green = rand() % 255;
                     draw_polygons( tmp, t, g, zbuf );
                     tmp->lastcol = 0;
                     break;
@@ -440,7 +476,15 @@ void my_main( int polygons ) {
                             op[i].op.line.p1[0],
                             op[i].op.line.p1[1],
                             op[i].op.line.p1[1]);
+                    matrix_mult( s->data[ s->top ], tmp );
                     draw_lines( tmp, t, g, zbuf );
+                    tmp->lastcol = 0;
+                    break;
+
+                case MESH:
+                    import_mesh(tmp, op[i].op.mesh.name);
+                    matrix_mult( s->data[ s->top ], tmp );
+                    draw_polygons(tmp, t, g, zbuf);
                     tmp->lastcol = 0;
                     break;
 

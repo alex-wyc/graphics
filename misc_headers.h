@@ -4,6 +4,7 @@
 int num_frames;
 char name[128];
 
+
 struct vary_node {
   
   char name[128];
@@ -11,6 +12,7 @@ struct vary_node {
   struct vary_node *next;
 };
 
+void import_mesh(struct matrix *dest, char *filepath);
 void my_main();
 void print_knobs();
 void process_knobs();
