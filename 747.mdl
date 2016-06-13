@@ -1,7 +1,12 @@
 frames 50
 basename boeing
+ambient 20 20 20
+constants global 0.8 0.8 0.8 0.8 0.8 0.8 0.8 0.8 0.8
+light red 250 600 0 255 0 0
+light blue 250 -100 0 0 0 255
 push
-move 0 230 -200
+move 0 230 0
+//move 400 230 0
 move 860 0 0 forward
 push
 scale 5 5 5

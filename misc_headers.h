@@ -1,9 +1,12 @@
 #ifndef MISC_HEADERS_H
 #define MISC_HEADERS_H
 
+#include "ml6.h"
+
 int num_frames;
 char name[128];
-
+color g;
+struct constants *k;
 
 struct vary_node {
   

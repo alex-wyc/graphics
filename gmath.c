@@ -76,3 +76,27 @@ double calculate_dot( struct matrix *points, int i ) {
   free(normal);  
   return dot;
 }
+
+void normalize(double *vec, int len) {
+    int i;
+    double magnitude;
+
+    for (i = 0 ; i < len ; i++) {
+        magnitude += vec[i] * vec[i];
+    }
+
+    magnitude = sqrt(magnitude);
+
+    for (i = 0 ; i < len ; i++) {
+        vec[i] = vec[i] / magnitude;
+    }
+}
+
+double dot(double *v1, double *v2, int n) {
+    double ret = 0;
+    int i;
+    for (i = 0 ; i < n ; i++) {
+        ret += v1[i] * v2[i];
+    }
+    return ret;
+}

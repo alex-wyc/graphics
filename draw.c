@@ -8,6 +8,7 @@
 #include "draw.h"
 #include "matrix.h"
 #include "gmath.h"
+#include "symtab.h"
 
 /*======== void add_polygon() ==========
 Inputs:   struct matrix *surfaces
@@ -49,35 +50,29 @@ triangles
 04/16/13 13:13:27
 jdyrlandweaver
 ====================*/
-void draw_polygons( struct matrix *polygons, screen s, color c, double **zbuf ) {
+void draw_polygons( struct matrix *polygons, screen s, color c, struct light **points_of_lights, struct constants *k, double **zbuf ) {
 
-    int i;  
+    //printf("Constants:\n");
+    //printf("Red: %lf, %lf, %lf,\nGreen: %lf, %lf, %lf,\nBlue: %lf, %lf, %lf\n",
+    //        k->r[0], k->r[1], k->r[2], k->g[0], k->g[1], k->g[2], k->b[0], k->b[1], k->b[2]);
+
+    double Iar = c.red * k->r[0], Iag = c.green * k->g[0], Iab = c.blue * k->b[0];
+
+    double Idr = 0, Idg = 0, Idb = 0;
+    double Isr = 0, Isg = 0, Isb = 0;
+
+    double *N;
+    double L[3];
+    double V[3] = {0, 0, -1};
+    double R[3];
+
+    struct light *point;
+
+    int i, j;
     for( i=0; i < polygons->lastcol-2; i+=3 ) {
-
+        Idr = 0, Idg = 0, Idb = 0;
+        Isr = 0, Isg = 0, Isb = 0;
         if ( calculate_dot( polygons, i ) < 0 ) {
-
-            draw_line( polygons->m[0][i],
-                    polygons->m[1][i],
-                    polygons->m[2][i],
-                    polygons->m[0][i+1],
-                    polygons->m[1][i+1],
-                    polygons->m[2][i+1],
-                    s, c, zbuf);
-            draw_line( polygons->m[0][i+1],
-                    polygons->m[1][i+1],
-                    polygons->m[2][i+1],
-                    polygons->m[0][i+2],
-                    polygons->m[1][i+2],
-                    polygons->m[2][i+2],
-                    s, c, zbuf);
-            draw_line( polygons->m[0][i+2],
-                    polygons->m[1][i+2],
-                    polygons->m[2][i+2],
-                    polygons->m[0][i],
-                    polygons->m[1][i],
-                    polygons->m[2][i],
-                    s, c, zbuf);
-
             double *xs = polygons->m[0]; // list of x-coors
             double *ys = polygons->m[1]; // list of y-coors
             double *zs = polygons->m[2]; // list of z-coors
@@ -122,6 +117,64 @@ void draw_polygons( struct matrix *polygons, screen s, color c, double **zbuf ) 
                 }
             }
             //}}}
+            
+            N = calculate_normal(
+                polygons->m[0][i+1] - polygons->m[0][i],
+                polygons->m[1][i+1] - polygons->m[1][i],
+		        polygons->m[2][i+1] - polygons->m[2][i],
+                polygons->m[0][i+2] - polygons->m[0][i],
+                polygons->m[1][i+2] - polygons->m[1][i],
+                polygons->m[2][i+2] - polygons->m[2][i]);
+
+            normalize(N, 3);
+
+            j = 0;
+            while ((point = points_of_lights[j++])) {
+                // I_d
+                L[0] = (xs[B] + xs[M] + xs[T]) / 3.0 - point->l[0];
+                L[1] = (ys[B] + ys[M] + ys[T]) / 3.0 - point->l[1];
+                L[2] = (zs[B] + zs[M] + zs[T]) / 3.0 - point->l[2];
+                normalize(L, 3);
+
+                Idr += point->c[0] * k->r[1] * dot(L, N, 3) * -1;
+                Idg += point->c[1] * k->g[1] * dot(L, N, 3) * -1;
+                Idb += point->c[2] * k->b[1] * dot(L, N, 3) * -1;
+
+                // I_s
+                R[0] = 2 * dot(L, N, 3) * N[0] - L[0];
+                R[1] = 2 * dot(L, N, 3) * N[1] - L[1];
+                R[2] = 2 * dot(L, N, 3) * N[2] - L[2];
+
+                Isr += point->c[0] * k->r[2] * dot(R, V, 3) * dot(R, V, 3);
+                Isg += point->c[1] * k->g[2] * dot(R, V, 3) * dot(R, V, 3);
+                Isb += point->c[2] * k->b[2] * dot(R, V, 3) * dot(R, V, 3);
+            }
+
+            c.red = Iar + Idr + Isr > 255 ? 255 : Iar + Idr + Isr;
+            c.green = Iag + Idg + Isg > 255 ? 255 : Iag + Idg + Isg;
+            c.blue = Iab + Idb + Isb > 255 ? 255 : Iab + Idb + Isb;
+
+            draw_line( polygons->m[0][i],
+                    polygons->m[1][i],
+                    polygons->m[2][i],
+                    polygons->m[0][i+1],
+                    polygons->m[1][i+1],
+                    polygons->m[2][i+1],
+                    s, c, zbuf);
+            draw_line( polygons->m[0][i+1],
+                    polygons->m[1][i+1],
+                    polygons->m[2][i+1],
+                    polygons->m[0][i+2],
+                    polygons->m[1][i+2],
+                    polygons->m[2][i+2],
+                    s, c, zbuf);
+            draw_line( polygons->m[0][i+2],
+                    polygons->m[1][i+2],
+                    polygons->m[2][i+2],
+                    polygons->m[0][i],
+                    polygons->m[1][i],
+                    polygons->m[2][i],
+                    s, c, zbuf);
 
             double x0, x1, y; // x on BT, x on BM or MT, y
             double z0, z1;

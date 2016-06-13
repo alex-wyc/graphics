@@ -56,12 +56,12 @@ jdyrlandweaver
 #include "symtab.h"
 #include "y.tab.h"
 
-#include "misc_headers.h"
 #include "matrix.h"
 #include "ml6.h"
 #include "display.h"
 #include "draw.h"
 #include "stack.h"
+#include "misc_headers.h"
 
 /*======== void first_pass()) ==========
 Inputs:   
@@ -85,9 +85,9 @@ jdyrlandweaver
 void first_pass() {
 
     int i;
-    short frame_check, vary_check, name_check;
+    short frame_check, vary_check, name_check, ambient_check, constant_c;
 
-    frame_check = vary_check = name_check = 0;
+    frame_check = vary_check = name_check = ambient_check, constant_c = 0;
 
     for( i=0; i<lastop; i++ ) {
 
@@ -106,6 +106,18 @@ void first_pass() {
             case VARY:
                 vary_check = 1;
                 break;
+
+            case AMBIENT:
+                ambient_check = 1;
+                g.red = op[i].op.ambient.c[0];
+                g.green = op[i].op.ambient.c[1];
+                g.blue = op[i].op.ambient.c[2];
+                break;
+
+            case CONSTANTS:
+                constant_c = 1;
+                k = lookup_symbol(op[i].op.constants.p->name)->s.c;
+                break;
         }
     }
 
@@ -117,6 +129,14 @@ void first_pass() {
     else if ( frame_check && !name_check ){
         printf("Animation code found but basename was not set, using \"frame\" as basename\n" );
         strncpy( name, "frame", sizeof( name ) );
+    }
+
+    if (!ambient_check) {
+        printf("Ambient color not set, using 255 255 255\n");
+    }
+
+    if (!constant_c) {
+        printf("Material constant not set, using 1 for all vals\n");
     }
 }
 
@@ -223,6 +243,36 @@ struct vary_node ** second_pass() {
     } //end for loop
     return knobs;
 }
+
+struct light **third_pass() {
+    int i, l_index = 0;
+    struct light **points;
+    // FIXME this is a hack, should not be capped to 10
+    points = (struct light **)malloc(10 * sizeof(struct light *));
+
+    for (i = 0 ; i < lastop ; i++) {
+        if (op[i].opcode == LIGHT) {
+            points[l_index++] = lookup_symbol(op[i].op.light.p->name)->s.l;
+        }
+    }
+
+    points[l_index] = NULL;
+    
+    return points;
+}
+
+//struct constants **fourth_pass() {
+//    int i, k_index = 0;
+//    struct constants **ks;
+//    // FIXME 2 this is the same hack
+//    ks = (struct constants **)malloc(10 * sizeof(struct constants*));
+//
+//    for (i = 0 ; i < lastop ; i++) {
+//        if (op[i].opcode == CONSTANTS) {
+//            ks[k_index++]
+//        }
+//    }
+//}
 
 
 /*======== void print_knobs() ==========
@@ -366,7 +416,6 @@ void my_main( int polygons ) {
     struct matrix *tmp;
     struct stack *s;
     screen t;
-    color g;
 
     struct vary_node **knobs;
     struct vary_node *vn;
@@ -375,18 +424,21 @@ void my_main( int polygons ) {
     num_frames = 1;
     step = 5;
 
-    g.red = 0;
+    g.red = 255;
     g.green = 255;
     g.blue = 255;
 
     double **zbuf;
 
+    struct light **points;
+    //struct constants **ks;
+
     first_pass();
 
-    if (num_frames == 1)
-        process_knobs();
-    else
+    if (num_frames != 1)
         knobs = second_pass();
+        points = third_pass();
+        //ks = fourth_pass();
 
     for ( f=0; f < num_frames; f++ ) {
 
@@ -441,7 +493,7 @@ void my_main( int polygons ) {
                             step);
                     //apply the current top origin
                     matrix_mult( s->data[ s->top ], tmp );
-                    draw_polygons( tmp, t, g, zbuf );
+                    draw_polygons( tmp, t, g, points, k, zbuf );
                     tmp->lastcol = 0;
                     break;
 
@@ -453,7 +505,7 @@ void my_main( int polygons ) {
                             op[i].op.torus.r1,
                             step);
                     matrix_mult( s->data[ s->top ], tmp );
-                    draw_polygons( tmp, t, g, zbuf );
+                    draw_polygons( tmp, t, g, points, k, zbuf );
                     tmp->lastcol = 0;
                     break;
 
@@ -465,7 +517,7 @@ void my_main( int polygons ) {
                             op[i].op.box.d1[1],
                             op[i].op.box.d1[2]);
                     matrix_mult( s->data[ s->top ], tmp );
-                    draw_polygons( tmp, t, g, zbuf );
+                    draw_polygons( tmp, t, g, points, k, zbuf );
                     tmp->lastcol = 0;
                     break;
 
@@ -484,7 +536,7 @@ void my_main( int polygons ) {
                 case MESH:
                     import_mesh(tmp, op[i].op.mesh.name);
                     matrix_mult( s->data[ s->top ], tmp );
-                    draw_polygons(tmp, t, g, zbuf);
+                    draw_polygons(tmp, t, g, points, k, zbuf);
                     tmp->lastcol = 0;
                     break;
 
