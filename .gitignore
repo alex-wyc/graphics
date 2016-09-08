@@ -30,3 +30,6 @@
 .*~
 .*.swp
 *.ppm
+
+anim/*
+*.gif
